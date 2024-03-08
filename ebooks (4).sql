@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 07, 2024 at 02:32 AM
+-- Generation Time: Mar 08, 2024 at 11:21 AM
 -- Server version: 8.0.31
 -- PHP Version: 8.0.26
 
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `nhaxuatban` (
   `id_nhaxuatban` int NOT NULL AUTO_INCREMENT,
   `ten_nhaxuatban` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id_nhaxuatban`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `nhaxuatban`
@@ -108,7 +108,11 @@ INSERT INTO `nhaxuatban` (`id_nhaxuatban`, `ten_nhaxuatban`) VALUES
 (1, 'Kim Đồng'),
 (2, 'Trẻ'),
 (3, 'NXB Giáo Dục'),
-(7, 'STU');
+(7, 'STU'),
+(8, 'Kim Đồng'),
+(9, 'Trẻ'),
+(10, 'NXB Giáo Dục'),
+(11, 'STU');
 
 -- --------------------------------------------------------
 
@@ -133,7 +137,17 @@ CREATE TABLE IF NOT EXISTS `sach` (
   KEY `id_theloai` (`id_theloai`),
   KEY `id_tacgia` (`id_tacgia`),
   KEY `id_nhaxuatban` (`id_nhaxuatban`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `sach`
+--
+
+INSERT INTO `sach` (`id_sach`, `tieu_de`, `ngay_xuat_ban`, `id_theloai`, `mo_ta`, `hinh_bia`, `noidung`, `id_nhaxuatban`, `id_tacgia`, `danhgia`, `gia`) VALUES
+(25, 'Nhà Giả Kim', '1988-04-25', 9, 'Một cuốn tiểu thuyết triết học', 'alchemist.jpg', 'Hành trình tìm kiếm chân lý bản thân', 1, 2, 4, 250000),
+(26, 'Doraemon', '1969-12-23', 10, 'Một bộ truyện tranh Nhật Bản nổi tiếng', 'doraemon.jpg', 'Những cuộc phiêu lưu của một chú mèo robot', 2, 1, 5, 120000),
+(27, 'Mã Da Vinci', '2003-03-18', 13, 'Một cuốn tiểu thuyết huyền bí hồi hộp', 'davinci.jpg', 'Âm mưu và câu đố', 3, 3, 4, 300000),
+(28, 'Người Hành Tinh Đỏ', '2011-09-27', 11, 'Một cuốn tiểu thuyết khoa học viễn tưởng', 'martian.jpg', 'Chuyến phiêu lưu sống còn trên Sao Hỏa', 1, 4, 4, 280000);
 
 -- --------------------------------------------------------
 
@@ -147,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `tacgia` (
   `ten_tacgia` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay_sinh` date DEFAULT NULL,
   PRIMARY KEY (`id_tacgia`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `tacgia`
@@ -158,7 +172,12 @@ INSERT INTO `tacgia` (`id_tacgia`, `ten_tacgia`, `ngay_sinh`) VALUES
 (2, 'Thiên Tàm Thổ', '1985-05-20'),
 (3, 'T.A Ilina', '1978-12-10'),
 (4, 'Elon Musk', '2013-12-03'),
-(5, 'Thành Nhân', '2002-07-27');
+(5, 'Thành Nhân', '2002-07-27'),
+(7, 'Nguyễn Nhật Ánh', '1990-01-15'),
+(8, 'Thiên Tàm Thổ', '1985-05-20'),
+(9, 'T.A Ilina', '1978-12-10'),
+(10, 'Elon Musk', '2013-12-03'),
+(11, 'Thành Nhân', '2002-07-27');
 
 -- --------------------------------------------------------
 
@@ -171,7 +190,22 @@ CREATE TABLE IF NOT EXISTS `theloai` (
   `id_theloai` int NOT NULL AUTO_INCREMENT,
   `ten_theloai` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id_theloai`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `theloai`
+--
+
+INSERT INTO `theloai` (`id_theloai`, `ten_theloai`) VALUES
+(9, 'Khoa Học Viễn Tưởng'),
+(10, 'Lãng Mạn'),
+(11, 'Bí Mật'),
+(12, 'Tiểu Sử'),
+(13, 'Fantasy'),
+(14, 'Hồi Hộp'),
+(15, 'Kịch Tính'),
+(16, 'Phiêu Lưu'),
+(17, 'Lịch Sử');
 
 -- --------------------------------------------------------
 

@@ -1,1 +1,0 @@
-class Sach extends S
