@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'Trangchu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -176,6 +177,8 @@ final Color foregroundColor = Colors.white;
                       ),
                       onPressed: () {
                         // Perform some action
+                          Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Trangchu()));
                       },
                       child: Text(
                         "Sign In",
@@ -233,4 +236,8 @@ final Color foregroundColor = Colors.white;
       ),
     );
   }
+
+
 }
+
+
