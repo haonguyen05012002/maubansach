@@ -86,6 +86,24 @@ class _TrangchuState extends State<Trangchu> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text("Smart Books"),
+          // them 2 nut tren appbar
+          actions: [
+            IconButton(
+              onPressed: () {
+                // Xử lý sự kiện khi nhấn vào nút thứ nhất
+                print('Button 1 pressed');
+              },
+              icon: Icon(Icons.shopping_cart),
+            ),
+            SizedBox(width: 10),
+            IconButton(
+              onPressed: () {
+                // Xử lý sự kiện khi nhấn vào nút thứ hai
+                print('Button 2 pressed');
+              },
+              icon: Icon(Icons.person_off_rounded),
+            ),
+          ],
         ),
         body: Container(
           child: _sachs.isNotEmpty

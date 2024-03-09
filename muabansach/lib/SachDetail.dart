@@ -24,14 +24,34 @@ class SachDetail extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(sach.hinh_bia!),
-                  radius: 150,
+                Container(
+                  width: 150, // Chiều rộng của khung hình chữ nhật
+                  height: 200, // Chiều cao của khung hình chữ nhật
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Màu nền của khung hình chữ nhật
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5), // Màu đổ bóng
+                        spreadRadius: 5, // Độ lan rộng của đổ bóng
+                        blurRadius: 7, // Độ mờ của đổ bóng
+                        offset: Offset(0, 3), // Vị trí của đổ bóng
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(10), // Bo tròn các góc của khung hình chữ nhật
+                  ),
+                  child: Image.network(
+                    sach.hinh_bia!,
+                    fit: BoxFit.cover, // Đảm bảo hình ảnh đổ đều trong kích thước của khung hình chữ nhật
+                  ),
                 ),
                 SizedBox(height: 150),
-                Text("ID: ${sach.tieu_de}", style: TextStyle(color: Colors.white, fontSize: 15),),
+                Text("Tựa đề: ${sach.tieu_de}", style: TextStyle(color: Colors.white, fontSize: 15), textAlign: TextAlign.left,),
 
-                Text("Name: ${sach.mo_ta}", style: TextStyle(color: Colors.white, fontSize: 20),),
+                Text("Tác giả: ${sach.id_tacgia}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
+                Text("Mô tả: ${sach.mo_ta}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
+
+                Text("Nhà xuất bản: ${sach.id_nhaxuatban}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
+                Text("Giá: ${sach.gia}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
                 // Thêm các thông tin khác của cocktail tại đây (nếu cần)
               ],
             ),

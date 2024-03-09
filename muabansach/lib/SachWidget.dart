@@ -14,62 +14,78 @@ class SachWidgets extends StatelessWidget {
       itemCount: sachs.length,
       itemBuilder: (context, index) {
         final sach = sachs[index];
-        return ListTile(
-          onTap: (){
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SachDetail(sach: sach),
+        return Container(
+          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 5,
+                offset: Offset(0, 3),
               ),
-            );
-          },
-          title: Row(
-            children: [
-              SizedBox(
-                width: 100,
-                child: ClipRRect(
-                  child: sach.hinh_bia != null
-                      ? Image.network(
-                    sach.hinh_bia!,
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                (loadingProgress.expectedTotalBytes ?? 1)
-                                : null,
-                          ),
-                        );
-                      }
-                    },
-                  )
-                      : Container(), // Nếu hinhBia là null, trả về một container trống
-                  borderRadius: BorderRadius.circular(10),
+            ],
+          ),
+          child: ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SachDetail(sach: sach),
                 ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        sach.id_sach.toString(),
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                      Text(
-                        sach.tieu_de ?? '', // Kiểm tra null cho tieu_de
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                    ],
+              );
+            },
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 100,
+                  height: 150, // Điều chỉnh kích thước của hình bìa
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: NetworkImage(sach.hinh_bia!),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              )
-            ],
+                SizedBox(width: 10), // Khoảng cách giữa hình bìa và nội dung
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          sach.tieu_de ?? '',
+                          style: TextStyle(color: Colors.black, fontSize: 15),
+                        ),
+                        SizedBox(height: 10), // Khoảng cách giữa tiêu đề và giá
+                        Text(
+                          'Giá: ${sach.gia}',
+                          style: TextStyle(color: Colors.black, fontSize: 15),
+                        ),
+                        SizedBox(height: 10), // Khoảng cách giữa giá và nút mua
+                        ElevatedButton(
+                          onPressed: () {
+                            // Xử lý khi nút được nhấn
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SachDetail(sach: sach),
+                              ),
+                            );
+                          },
+                          child: Text('Mua'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
