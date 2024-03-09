@@ -45,13 +45,13 @@ class SachDetail extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 150),
-                Text("Tựa đề: ${sach.tieu_de}", style: TextStyle(color: Colors.white, fontSize: 15), textAlign: TextAlign.left,),
+                Text("Tựa đề: ${sach.tieu_de}", style: TextStyle(color: Colors.white, fontSize: 25), textAlign: TextAlign.left,),
 
                 Text("Tác giả: ${sach.id_tacgia}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
                 Text("Mô tả: ${sach.mo_ta}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
 
                 Text("Nhà xuất bản: ${sach.id_nhaxuatban}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
-                Text("Giá: ${sach.gia}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
+                Text("Giá: ${sach.gia} VNĐ", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
                 // Thêm các thông tin khác của cocktail tại đây (nếu cần)
               ],
             ),

@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'SachWidget.dart';
 import 'Sach.dart';
-
+import 'model/Giohang.dart';
 class Trangchu extends StatefulWidget {
 
   const Trangchu({Key? key}) : super(key: key);
@@ -92,6 +92,10 @@ class _TrangchuState extends State<Trangchu> {
               onPressed: () {
                 // Xử lý sự kiện khi nhấn vào nút thứ nhất
                 print('Button 1 pressed');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Giohang()),
+                );
               },
               icon: Icon(Icons.shopping_cart),
             ),
@@ -99,6 +103,7 @@ class _TrangchuState extends State<Trangchu> {
             IconButton(
               onPressed: () {
                 // Xử lý sự kiện khi nhấn vào nút thứ hai
+
                 print('Button 2 pressed');
               },
               icon: Icon(Icons.person_off_rounded),

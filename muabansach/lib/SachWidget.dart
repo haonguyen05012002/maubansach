@@ -64,7 +64,7 @@ class SachWidgets extends StatelessWidget {
                         ),
                         SizedBox(height: 10), // Khoảng cách giữa tiêu đề và giá
                         Text(
-                          'Giá: ${sach.gia}',
+                          'Giá: ${sach.gia} VNĐ',
                           style: TextStyle(color: Colors.black, fontSize: 15),
                         ),
                         SizedBox(height: 10), // Khoảng cách giữa giá và nút mua
