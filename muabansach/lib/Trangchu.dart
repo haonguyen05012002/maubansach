@@ -38,9 +38,9 @@ class _TrangchuState extends State<Trangchu> {
       Uri.parse("http://localhost:3000/api/sach"),
     );
     if (response.statusCode == 200) {
-      final result = jsonDecode(response.body);
-      Iterable list = result["drinks"];
-      return list.map((sach) => Sach.fromJson(sach)).toList();
+      final List<dynamic> data = jsonDecode(response.body);
+      List<Sach> sachList = data.map((sachJson) => Sach.fromJson(sachJson)).toList();
+      return sachList;
     } else {
       throw Exception("Failed to load books!");
     }
