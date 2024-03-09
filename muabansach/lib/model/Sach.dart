@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 
 class Sach {
   final int id_sach;
@@ -6,7 +6,7 @@ class Sach {
   final DateTime ngay_xuat_ban;
   final int id_theloai;
   final String mo_ta;
-  final String hinh_bia;
+  final String? hinh_bia;
   final int id_nhaxuatban;
   final int id_tacgia;
   final int danhgia;

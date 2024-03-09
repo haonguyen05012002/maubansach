@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 08, 2024 at 11:21 AM
+-- Generation Time: Mar 09, 2024 at 08:46 AM
 -- Server version: 8.0.31
 -- PHP Version: 8.0.26
 
@@ -51,6 +51,15 @@ CREATE TABLE IF NOT EXISTS `giohang` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `giohang`
+--
+
+INSERT INTO `giohang` (`id`, `id_sach`) VALUES
+(1, 11),
+(2, 2),
+(3, 3);
+
 -- --------------------------------------------------------
 
 --
@@ -77,15 +86,21 @@ CREATE TABLE IF NOT EXISTS `hoadon` (
 DROP TABLE IF EXISTS `nguoidung`;
 CREATE TABLE IF NOT EXISTS `nguoidung` (
   `id_nguoidung` int NOT NULL AUTO_INCREMENT,
-  `ten_dangnhap` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_khau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `admin` bit(1) NOT NULL,
   `id_giohang` int NOT NULL,
   PRIMARY KEY (`id_nguoidung`),
-  UNIQUE KEY `ten_dangnhap` (`ten_dangnhap`),
   KEY `id_giohang` (`id_giohang`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `nguoidung`
+--
+
+INSERT INTO `nguoidung` (`id_nguoidung`, `email`, `mat_khau`, `admin`, `id_giohang`) VALUES
+(44, '1@gmail.com', '1', b'0', 1),
+(45, 'user2@example.com', 'password2', b'1', 2);
 
 -- --------------------------------------------------------
 
