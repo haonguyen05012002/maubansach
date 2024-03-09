@@ -6,6 +6,7 @@ import 'SachWidget.dart';
 import 'Sach.dart';
 
 class Trangchu extends StatefulWidget {
+
   const Trangchu({Key? key}) : super(key: key);
 
   @override
@@ -14,7 +15,8 @@ class Trangchu extends StatefulWidget {
 
 class _TrangchuState extends State<Trangchu> {
   List<Sach> _sachs = [];
-
+  bool _isLoading = false;
+  bool _hasError = false;
   @override
   void initState() {
     super.initState();
@@ -22,21 +24,31 @@ class _TrangchuState extends State<Trangchu> {
   }
 
   Future<void> _populateAllBooks() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final sach = await _fetchAllBooks();
       setState(() {
         _sachs = sach;
+        _hasError = false;
       });
     } catch (error) {
+      setState(() {
+        _hasError = true;
+      });
       // Handle error, e.g., show an error message
       print('Error loading books: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   Future<List<Sach>> _fetchAllBooks() async {
-    final response = await http.get(
-      Uri.parse("http://localhost:3000/api/sach"),
-    );
+    final response = await http.get(Uri.parse("http://localhost:3000/api/sach"));
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       List<Sach> sachList = data.map((sachJson) => Sach.fromJson(sachJson)).toList();
@@ -45,6 +57,7 @@ class _TrangchuState extends State<Trangchu> {
       throw Exception("Failed to load books!");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

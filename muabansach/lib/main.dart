@@ -79,7 +79,7 @@ final Color foregroundColor = Colors.white;
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
                           radius: 48.0,
-                          child: Image.asset('assets/lock.png'),
+                          //child: Image.asset('assets/lock.png'),
                         ),
                       ),
                     ),
