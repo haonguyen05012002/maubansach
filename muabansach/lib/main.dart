@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'Trangchu.dart';
+import 'package:http/http.dart' as http;
+import 'model/nguoidung.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,7 +48,34 @@ final Color backgroundColor2 = Color(0xFF4aa0d5);
 final Color highlightColor = Color(0xfff65aa3);
 final Color foregroundColor = Colors.white;
 
+Future<bool> checkLogin(String email, String password) async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/api/nguoidung'),
+    );
 
+    if (response.statusCode == 200) {
+      final List<dynamic> usersJson = json.decode(response.body);
+
+      // Chuyển đổi danh sách đối tượng json thành danh sách đối tượng NguoiDung
+      List<NguoiDung> users =
+      usersJson.map((json) => NguoiDung.fromJson(json)).toList();
+
+      // Kiểm tra đăng nhập với thông tin nhập từ người dùng
+      bool isLoggedIn = users.any((user) =>
+      user.email == email && user.mat_khau == password);
+
+      return isLoggedIn;
+    } else {
+      // Xử lý lỗi nếu không thể kết nối được với API
+      return false;
+    }
+  } catch (e) {
+    // Xử lý lỗi nếu có bất kỳ lỗi nào khác xảy ra
+    print('Error: $e');
+    return false;
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +144,7 @@ final Color foregroundColor = Colors.white;
                   ),
                   Expanded(
                     child: TextField(
+                      controller: emaildn,
                       textAlign: TextAlign.left,
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -151,6 +183,7 @@ final Color foregroundColor = Colors.white;
                   ),
                   Expanded(
                     child: TextField(
+                      controller: matkhaudn,
                       obscureText: true,
                       textAlign: TextAlign.left,
                       decoration: InputDecoration(
@@ -175,10 +208,24 @@ final Color foregroundColor = Colors.white;
                         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                         backgroundColor: Colors.lightBlue,
                       ),
-                      onPressed: () {
-                        // Perform some action
-                          Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Trangchu()));
+                      onPressed: () async {
+                        // Kiểm tra đăng nhập khi người dùng nhấn nút "Sign In"
+                        bool result = await checkLogin(emaildn.text, matkhaudn.text);
+
+                        // Nếu đăng nhập thành công, chuyển đến trang chủ
+                        if (result) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Trangchu()),
+                          );
+                        } else {
+                          // Hiển thị thông báo lỗi khi đăng nhập thất bại
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text( "tài khoản hoặc mật khẩu sai. vui lòng thử lại"),
+                            ),
+                          );
+                        }
                       },
                       child: Text(
                         "Sign In",
