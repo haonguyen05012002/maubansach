@@ -48,15 +48,35 @@ class _TrangchuState extends State<Trangchu> {
   }
 
   Future<List<Sach>> _fetchAllBooks() async {
-    final response = await http.get(Uri.parse("http://localhost:3000/api/sach"));
+    final response = await http.get(
+      Uri.parse("http://localhost:3000/api/sach"),
+    );
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      List<Sach> sachList = data.map((sachJson) => Sach.fromJson(sachJson)).toList();
+      List<Sach> sachList = data.map((sachJson) {
+        // Chuyển đổi chuỗi thành DateTime
+        DateTime ngayXuatBan = DateTime.parse(sachJson['ngay_xuat_ban']);
+        // Tạo một đối tượng Sach từ JSON
+        return Sach(
+          id_sach: sachJson['id_sach'],
+          tieu_de: sachJson['tieu_de'],
+          ngay_xuat_ban: ngayXuatBan, // Sử dụng DateTime đã chuyển đổi
+          id_theloai: sachJson['id_theloai'],
+          mo_ta: sachJson['mo_ta'],
+          hinh_bia: sachJson['hinh_bia'],
+          noidung: sachJson['noidung'],
+          id_nhaxuatban: sachJson['id_nhaxuatban'],
+          id_tacgia: sachJson['id_tacgia'],
+          danhgia: sachJson['danhgia'],
+          gia: sachJson['gia'],
+        );
+      }).toList();
       return sachList;
     } else {
       throw Exception("Failed to load books!");
     }
   }
+
 
 
   @override

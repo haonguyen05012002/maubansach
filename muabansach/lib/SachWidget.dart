@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:muabansach/SachDetail.dart';
 import 'Sach.dart';
 import 'dart:convert';
 
@@ -14,6 +15,14 @@ class SachWidgets extends StatelessWidget {
       itemBuilder: (context, index) {
         final sach = sachs[index];
         return ListTile(
+          onTap: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SachDetail(sach: sach),
+              ),
+            );
+          },
           title: Row(
             children: [
               SizedBox(
