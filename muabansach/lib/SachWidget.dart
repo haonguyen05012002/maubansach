@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:muabansach/SachDetail.dart';
+import 'package:muabansach/model/Giohang.dart';
 import 'Sach.dart';
 import 'dart:convert';
 
 class SachWidgets extends StatelessWidget {
-  SachWidgets({Key? key, required this.sachs}) : super(key: key);
+  SachWidgets({Key? key, required this.sachs, required this.addToCart}) : super(key: key);
 
   final List<Sach> sachs;
+  final Function(Sach) addToCart; // Hàm thêm sản phẩm vào giỏ hàng
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class SachWidgets extends StatelessWidget {
               children: [
                 Container(
                   width: 100,
-                  height: 150, // Điều chỉnh kích thước của hình bìa
+                  height: 150,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
@@ -51,7 +53,7 @@ class SachWidgets extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 10), // Khoảng cách giữa hình bìa và nội dung
+                SizedBox(width: 10),
                 Flexible(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -62,21 +64,16 @@ class SachWidgets extends StatelessWidget {
                           sach.tieu_de ?? '',
                           style: TextStyle(color: Colors.black, fontSize: 15),
                         ),
-                        SizedBox(height: 10), // Khoảng cách giữa tiêu đề và giá
+                        SizedBox(height: 10),
                         Text(
                           'Giá: ${sach.gia} VNĐ',
                           style: TextStyle(color: Colors.black, fontSize: 15),
                         ),
-                        SizedBox(height: 10), // Khoảng cách giữa giá và nút mua
+                        SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () {
-                            // Xử lý khi nút được nhấn
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SachDetail(sach: sach),
-                              ),
-                            );
+                            // Gọi hàm thêm sản phẩm vào giỏ hàng và truyền đối tượng sách tương ứng
+                            addToCart(sach);
                           },
                           child: Text('Mua'),
                         ),
@@ -92,4 +89,5 @@ class SachWidgets extends StatelessWidget {
     );
   }
 }
+
 

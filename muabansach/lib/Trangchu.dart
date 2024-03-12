@@ -5,8 +5,9 @@ import 'dart:convert';
 import 'SachWidget.dart';
 import 'Sach.dart';
 import 'model/Giohang.dart';
-class Trangchu extends StatefulWidget {
 
+
+class Trangchu extends StatefulWidget {
   const Trangchu({Key? key}) : super(key: key);
 
   @override
@@ -15,8 +16,11 @@ class Trangchu extends StatefulWidget {
 
 class _TrangchuState extends State<Trangchu> {
   List<Sach> _sachs = [];
+  List<Map<String, dynamic>> _cartItems = [];
+
   bool _isLoading = false;
   bool _hasError = false;
+
   @override
   void initState() {
     super.initState();
@@ -60,7 +64,7 @@ class _TrangchuState extends State<Trangchu> {
         return Sach(
           id_sach: sachJson['id_sach'],
           tieu_de: sachJson['tieu_de'],
-          ngay_xuat_ban: ngayXuatBan, // Sử dụng DateTime đã chuyển đổi
+          ngay_xuat_ban: ngayXuatBan,
           id_theloai: sachJson['id_theloai'],
           mo_ta: sachJson['mo_ta'],
           hinh_bia: sachJson['hinh_bia'],
@@ -77,6 +81,20 @@ class _TrangchuState extends State<Trangchu> {
     }
   }
 
+  // Hàm để thêm sản phẩm vào giỏ hàng
+  // Trong widget Trangchu
+  void addToCart(Sach sach) {
+    setState(() {
+      // Chuyển đổi Sach thành một Map<String, dynamic> trước khi thêm vào giỏ hàng
+      Map<String, dynamic> item = {
+        "name": sach.tieu_de,
+        "price": sach.gia,
+        "quantity": 1, // Mặc định số lượng là 1 khi thêm vào giỏ hàng
+      };
+      _cartItems.add(item);
+    });
+  }
+
 
 
   @override
@@ -86,15 +104,12 @@ class _TrangchuState extends State<Trangchu> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text("Smart Books"),
-          // them 2 nut tren appbar
           actions: [
             IconButton(
               onPressed: () {
-                // Xử lý sự kiện khi nhấn vào nút thứ nhất
-                print('Button 1 pressed');
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Giohang()),
+                  MaterialPageRoute(builder: (context) => Giohang(addToCart: addToCart)),
                 );
               },
               icon: Icon(Icons.shopping_cart),
@@ -102,8 +117,6 @@ class _TrangchuState extends State<Trangchu> {
             SizedBox(width: 10),
             IconButton(
               onPressed: () {
-                // Xử lý sự kiện khi nhấn vào nút thứ hai
-
                 print('Button 2 pressed');
               },
               icon: Icon(Icons.person_off_rounded),
@@ -112,7 +125,7 @@ class _TrangchuState extends State<Trangchu> {
         ),
         body: Container(
           child: _sachs.isNotEmpty
-              ? SachWidgets(sachs: _sachs)
+              ? SachWidgets(sachs: _sachs, addToCart: addToCart) // Truyền hàm addToCart vào SachWidgets
               : const Center(
             child: Text("No books found"),
           ),
