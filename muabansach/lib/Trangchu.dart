@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'SachWidget.dart';
 import 'Sach.dart';
-import 'model/Giohang.dart';
+import 'model/GiohangPage.dart';
 
 
 class Trangchu extends StatefulWidget {

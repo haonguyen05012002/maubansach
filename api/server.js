@@ -77,12 +77,11 @@ app.get('/api/nhaxuatban', (req, res) => {
   });
 });
 // Route mẫu để lấy danh sách giỏ hàng
-// Route để lấy danh sách giỏ hàng của một người dùng cụ thể
+// API để lấy danh sách tất cả các mục trong giỏ hàng
 app.get('/api/giohang', (req, res) => {
-  const { id_nguoidung } = req.body;
-  const query = 'SELECT * FROM giohang WHERE id_nguoidung = ?';
+  const query = 'SELECT * FROM giohang';
 
-  db.query(query, [id_nguoidung], (err, result) => {
+  db.query(query, (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -92,6 +91,8 @@ app.get('/api/giohang', (req, res) => {
   });
 });
 
+
+// API để thêm một mục vào giỏ hàng
 // API để thêm một mục vào giỏ hàng
 app.post('/api/giohang', (req, res) => {
   const { id_nguoidung, id_sach } = req.body;
@@ -100,17 +101,21 @@ app.post('/api/giohang', (req, res) => {
     return res.status(400).json({ error: 'id_nguoidung and id_sach are required.' });
   }
 
-  const addCartItemQuery = 'INSERT INTO giohang (id_nguoidung, id_sach) VALUES (?, ?)';
+  const addCartItemQuery = 'INSERT INTO giohang (id_sach, id_nguoidung) VALUES (?, ?)';
 
-  db.query(addCartItemQuery, [id_nguoidung, id_sach], (err, result) => {
+  db.query(addCartItemQuery, [id_sach, id_nguoidung], (err, result) => {
     if (err) {
       console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', err);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
-    res.json({ message: 'Sản phẩm đã được thêm vào giỏ hàng.' });
+    // Lấy ID của mục giỏ hàng vừa được thêm vào
+    const insertedId = result.insertId;
+
+    res.json({ id: insertedId, message: 'Sản phẩm đã được thêm vào giỏ hàng.' });
   });
 });
+
 
 // API để xóa một mục khỏi giỏ hàng
 app.delete('/api/giohang', (req, res) => {
@@ -207,6 +212,39 @@ app.post('/api/addnguoidung', (req, res) => {
     res.json({  email });
   });
 });
+
+app.get('/api/giohang/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const sql = 'SELECT id_sach FROM giohang WHERE id_nguoidung = ?';
+  connection.query(sql, [userId], (error, results, fields) => {
+    if (error) {
+      console.error('Error getting cart items: ' + error.message);
+      res.status(500).send('Error getting cart items from database');
+      return;
+    }
+    res.json(results);
+  });
+});
+
+
+app.get('/api/sach/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const sql = 'SELECT * FROM sach WHERE id_sach = ?';
+    const [rows, fields] = await db.promise().query(sql, [id]);
+    if (rows.length > 0) {
+      res.json(rows[0]); // Trả về chỉ một cuốn sách
+    } else {
+      res.status(404).send('Sách không tồn tại');
+    }
+  } catch (error) {
+    console.error('Lỗi khi lấy chi tiết sách: ' + error.message);
+    res.status(500).send('Lỗi khi lấy chi tiết sách từ cơ sở dữ liệu');
+  }
+});
+
+
+
 
 // Khởi động server
 app.listen(port, () => {
