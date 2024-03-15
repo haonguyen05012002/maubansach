@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:muabansach/UserSingleton.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'SachWidget.dart';
@@ -25,6 +26,7 @@ class _TrangchuState extends State<Trangchu> {
   void initState() {
     super.initState();
     _populateAllBooks();
+    print(UserSingleton().getUserId());
   }
 
   Future<void> _populateAllBooks() async {
@@ -81,20 +83,6 @@ class _TrangchuState extends State<Trangchu> {
     }
   }
 
-  // Hàm để thêm sản phẩm vào giỏ hàng
-  // Trong widget Trangchu
-  void addToCart(Sach sach) {
-    setState(() {
-      // Chuyển đổi Sach thành một Map<String, dynamic> trước khi thêm vào giỏ hàng
-      Map<String, dynamic> item = {
-        "name": sach.tieu_de,
-        "price": sach.gia,
-        "quantity": 1, // Mặc định số lượng là 1 khi thêm vào giỏ hàng
-      };
-      _cartItems.add(item);
-    });
-  }
-
 
 
   @override
@@ -109,7 +97,7 @@ class _TrangchuState extends State<Trangchu> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Giohang(addToCart: addToCart)),
+                  MaterialPageRoute(builder: (context) => Giohang()),
                 );
               },
               icon: Icon(Icons.shopping_cart),
@@ -125,7 +113,7 @@ class _TrangchuState extends State<Trangchu> {
         ),
         body: Container(
           child: _sachs.isNotEmpty
-              ? SachWidgets(sachs: _sachs, addToCart: addToCart) // Truyền hàm addToCart vào SachWidgets
+              ? SachWidgets(sachs: _sachs) // Truyền hàm addToCart vào SachWidgets
               : const Center(
             child: Text("No books found"),
           ),

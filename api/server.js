@@ -77,10 +77,12 @@ app.get('/api/nhaxuatban', (req, res) => {
   });
 });
 // Route mẫu để lấy danh sách giỏ hàng
+// Route để lấy danh sách giỏ hàng của một người dùng cụ thể
 app.get('/api/giohang', (req, res) => {
-  const query = 'SELECT * FROM giohang';
+  const { id_nguoidung } = req.body;
+  const query = 'SELECT * FROM giohang WHERE id_nguoidung = ?';
 
-  db.query(query, (err, result) => {
+  db.query(query, [id_nguoidung], (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -89,6 +91,62 @@ app.get('/api/giohang', (req, res) => {
     }
   });
 });
+
+// API để thêm một mục vào giỏ hàng
+app.post('/api/giohang', (req, res) => {
+  const { id_nguoidung, id_sach } = req.body;
+
+  if (!id_nguoidung || !id_sach) {
+    return res.status(400).json({ error: 'id_nguoidung and id_sach are required.' });
+  }
+
+  const addCartItemQuery = 'INSERT INTO giohang (id_nguoidung, id_sach) VALUES (?, ?)';
+
+  db.query(addCartItemQuery, [id_nguoidung, id_sach], (err, result) => {
+    if (err) {
+      console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    res.json({ message: 'Sản phẩm đã được thêm vào giỏ hàng.' });
+  });
+});
+
+// API để xóa một mục khỏi giỏ hàng
+app.delete('/api/giohang', (req, res) => {
+  const { id_nguoidung, id_sach } = req.body;
+
+  if (!id_nguoidung || !id_sach) {
+    return res.status(400).json({ error: 'id_nguoidung and id_sach are required.' });
+  }
+
+  const deleteCartItemQuery = 'DELETE FROM giohang WHERE id_nguoidung = ? AND id_sach = ?';
+
+  db.query(deleteCartItemQuery, [id_nguoidung, id_sach], (err, result) => {
+    if (err) {
+      console.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    res.json({ message: 'Sản phẩm đã được xóa khỏi giỏ hàng.' });
+  });
+});
+//
+app.get('/api/giohang/:id_nguoidung', (req, res) => {
+  const { id_nguoidung } = req.params;
+  const query = 'SELECT * FROM giohang WHERE id_nguoidung = ?';
+
+  db.query(query, [id_nguoidung], (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+
 // Route mẫu để lấy danh sách người dùng
 app.get('/api/nguoidung', (req, res) => {
   const query = 'SELECT * FROM nguoidung';

@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:muabansach/SachDetail.dart';
-import 'package:muabansach/model/Giohang.dart';
-import 'Sach.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
 import 'dart:convert';
+import 'Sach.dart';
+import 'UserSingleton.dart';
 
 class SachWidgets extends StatelessWidget {
-  SachWidgets({Key? key, required this.sachs, required this.addToCart}) : super(key: key);
-
   final List<Sach> sachs;
-  final Function(Sach) addToCart; // Hàm thêm sản phẩm vào giỏ hàng
+
+  const SachWidgets({Key? key, required this.sachs}) : super(key: key);
+
+  Future<void> addToCart(int userId, int sachId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/api/giohang'),
+        body: {
+          'id_nguoidung': userId.toString(),
+          'id_sach': sachId.toString(),
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Đã thêm sản phẩm vào giỏ hàng thành công
+        print('Sản phẩm đã được thêm vào giỏ hàng.');
+      } else {
+        // Xử lý lỗi từ phía server
+        print('Lỗi khi thêm sản phẩm vào giỏ hàng: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Xử lý lỗi nếu có lỗi kết nối hoặc lỗi khác
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +55,8 @@ class SachWidgets extends StatelessWidget {
           ),
           child: ListTile(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SachDetail(sach: sach),
-                ),
-              );
+              // Hiển thị chi tiết sách khi người dùng nhấn vào
+              print('Đang hiển thị chi tiết sách...');
             },
             title: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,8 +91,8 @@ class SachWidgets extends StatelessWidget {
                         SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: () {
-                            // Gọi hàm thêm sản phẩm vào giỏ hàng và truyền đối tượng sách tương ứng
-                            addToCart(sach);
+                            // Gọi hàm thêm sản phẩm vào giỏ hàng
+                            addToCart(UserSingleton().getUserId()!, sach.id_sach);
                           },
                           child: Text('Mua'),
                         ),
@@ -89,5 +108,3 @@ class SachWidgets extends StatelessWidget {
     );
   }
 }
-
-

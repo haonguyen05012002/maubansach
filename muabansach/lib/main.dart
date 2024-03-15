@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:muabansach/UserSingleton.dart';
 import 'Dangki.dart';
 import 'Trangchu.dart';
 import 'package:http/http.dart' as http;
@@ -77,6 +78,38 @@ Future<bool> checkLogin(String email, String password) async {
     return false;
   }
 }
+
+  Future<int?> findUserIdByEmail(String email) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:3000/api/nguoidung'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> usersJson = json.decode(response.body);
+
+        // Chuyển đổi danh sách đối tượng json thành danh sách đối tượng NguoiDung
+        List<NguoiDung> users =
+        usersJson.map((json) => NguoiDung.fromJson(json)).toList();
+
+        // Tìm id của người dùng dựa trên email
+        int? userId;
+        users.forEach((user) {
+          if (user.email == email) {
+            userId = user.id_nguoidung as int?;
+          }
+        });
+        return userId;
+      } else {
+        // Xử lý lỗi nếu không thể kết nối được với API
+        return null;
+      }
+    } catch (e) {
+      // Xử lý lỗi nếu có bất kỳ lỗi nào khác xảy ra
+      print('Error: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -216,6 +249,8 @@ Future<bool> checkLogin(String email, String password) async {
 
                         // Nếu đăng nhập thành công, chuyển đến trang chủ
                         if (result) {
+                          int? userID = await findUserIdByEmail(emaildn.text);
+                          UserSingleton().setUserId(userID!);
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => Trangchu()),
