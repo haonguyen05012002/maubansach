@@ -1,11 +1,11 @@
 const express = require('express');
 const mysql = require('mysql');
-
 const cors = require('cors'); 
-
 const app = express();
 const port = 3000;
-
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // Kết nối đến cơ sở dữ liệu
@@ -128,6 +128,28 @@ app.get('/api/voucher', (req, res) => {
     }
   });
 });
+app.post('/api/addnguoidung', (req, res) => {
+  const { email, mat_khau } = req.body;
+
+  if (!email || !mat_khau) {
+    return res.status(400).json({ error: 'Email and password are required.' });
+  }
+
+  // Thêm giá trị mặc định cho id_giohang hoặc sử dụng giá trị NULL nếu không có giá trị cụ thể
+  const addUserQuery = 'INSERT INTO nguoidung (email, mat_khau) VALUES (?, ?)';
+
+  // Thay thế [email, mat_khau] bằng [email, mat_khau, gia_tri_id_giohang] trong hàm query bên dưới
+
+  db.query(addUserQuery, [email, mat_khau], (addUserErr, addUserResult) => {
+    if (addUserErr) {
+      console.error('Lỗi khi thêm người dùng vào cơ sở dữ liệu:', addUserErr);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    res.json({  email });
+  });
+});
+
 // Khởi động server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
