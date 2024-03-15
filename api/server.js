@@ -227,21 +227,19 @@ app.get('/api/giohang/:userId', (req, res) => {
 });
 
 
-app.get('/api/sach/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const sql = 'SELECT * FROM sach WHERE id_sach = ?';
-    const [rows, fields] = await db.promise().query(sql, [id]);
-    if (rows.length > 0) {
-      res.json(rows[0]); // Trả về chỉ một cuốn sách
-    } else {
-      res.status(404).send('Sách không tồn tại');
+app.get('/api/sach/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const sql = 'SELECT * FROM sach WHERE id_sach IN (SELECT id_sach FROM giohang WHERE id_nguoidung = ?)';
+  db.query(sql, [userId], (error, results, fields) => {
+    if (error) {
+      console.error('Error getting books: ' + error.message);
+      res.status(500).send('Error getting books from database');
+      return;
     }
-  } catch (error) {
-    console.error('Lỗi khi lấy chi tiết sách: ' + error.message);
-    res.status(500).send('Lỗi khi lấy chi tiết sách từ cơ sở dữ liệu');
-  }
+    res.json(results);
+  });
 });
+
 
 
 

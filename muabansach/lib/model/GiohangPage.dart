@@ -21,45 +21,42 @@ class _GioHangPageState extends State<Giohang> {
   Future<void> loadCartItems() async {
     try {
       final int userId = UserSingleton().getUserId() ?? 0;
-
-      final response = await http.get(
-        Uri.parse('http://localhost:3000/api/giohang/$userId'),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> gioHangJson = json.decode(response.body);
-        final List<int> idSachList = gioHangJson.map((json) => json['id_sach'] as int).toList();
-
-        // Load sách từ danh sách id_sach đã lọc
-        final sachList = await fetchBooksInCart(idSachList);
-        setState(() {
-          this.sachList = sachList;
-        });
-      } else {
-        print('Error: ${response.statusCode}');
-      }
+      final sachList = await fetchBooksInCart(userId);
+      setState(() {
+        this.sachList = sachList;
+      });
     } catch (e) {
       print('Error: $e');
     }
   }
 
-  Future<List<Sach>> fetchBooksInCart(List<int> idSachList) async {
-    List<Sach> sachList = [];
-    for (int idSach in idSachList) {
+
+
+
+  Future<List<Sach>> fetchBooksInCart(int userId) async {
+    try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/sach/$idSach'),
+        Uri.parse('http://localhost:3000/api/sach/$userId'),
       );
 
       if (response.statusCode == 200) {
-        final sachJson = json.decode(response.body);
-        final sach = Sach.fromJson(sachJson);
-        sachList.add(sach);
+        final List<dynamic> sachJsonList = json.decode(response.body);
+        List<Sach> sachList = [];
+        for (var sachJson in sachJsonList) {
+          final sach = Sach.fromJson(sachJson);
+          sachList.add(sach);
+        }
+        return sachList;
       } else {
-        print('Error fetching sach with id $idSach: ${response.statusCode}');
+        print('Error fetching books for user $userId: ${response.statusCode}');
+        return [];
       }
+    } catch (e) {
+      print('Error: $e');
+      return [];
     }
-    return sachList;
   }
+
 
   @override
   Widget build(BuildContext context) {
