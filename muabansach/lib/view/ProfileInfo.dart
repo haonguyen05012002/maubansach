@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../APIConstant.dart';
 import '../model/User.dart';
 import '../UserSingleton.dart';
-String ip ="http://172.21.11.229:3000/api";
+String ip =APIConstants.ip;
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();

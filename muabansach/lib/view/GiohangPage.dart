@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:muabansach/UserSingleton.dart';
 import 'package:muabansach/model/SachTemp.dart';
 
-String ip ="http://172.21.11.229:3000/api";
+import '../APIConstant.dart';
+
+String ip =APIConstants.ip;
 
 class Giohang extends StatefulWidget {
   @override

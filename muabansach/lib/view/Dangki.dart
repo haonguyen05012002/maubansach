@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:muabansach/view/Trangchu.dart';
+import '../APIConstant.dart';
+import '../main.dart';
 import 'Dangki.dart';
 import '../model/nguoidung.dart';
-import 'package:muabansach/main.dart';
+
+String ip =APIConstants.ip;
 
 Future<bool> signup(String email, String password) async {
   try {

@@ -3,10 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:muabansach/view/SachDetail.dart';
 import 'dart:async';
 import 'dart:convert';
+import '../APIConstant.dart';
 import '../model/Sach.dart';
 import '../UserSingleton.dart';
 
-String ip ="http://172.21.11.229:3000/api";
+String ip =APIConstants.ip;
 class SachWidgets extends StatelessWidget {
   final List<Sach> sachs;
 

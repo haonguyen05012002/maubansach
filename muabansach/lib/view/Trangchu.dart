@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:muabansach/APIConstant.dart';
 import 'package:muabansach/view/ProfileInfo.dart';
 import 'package:muabansach/UserSingleton.dart';
 import 'dart:async';
@@ -9,7 +10,8 @@ import '../model/Sach.dart';
 import 'GiohangPage.dart';
 
 
-String ip ="http://172.21.11.229:3000/api";
+ String ip =APIConstants.ip;
+
 class Trangchu extends StatefulWidget {
   const Trangchu({Key? key}) : super(key: key);
 
@@ -94,7 +96,39 @@ class _TrangchuState extends State<Trangchu> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text("Smart Books"),
+          centerTitle: false,
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 150.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Search...",
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                IconButton(
+                  onPressed: () {
+                    // Handle search action
+                  },
+                  icon: Icon(Icons.search),
+                ),
+              ],
+            ),
+          ),
           actions: [
+
+
             IconButton(
               onPressed: () {
                 Navigator.push(

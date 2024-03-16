@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:muabansach/UserSingleton.dart';
+import 'APIConstant.dart';
 import 'view/Dangki.dart';
 import 'view/Trangchu.dart';
 import 'package:http/http.dart' as http;
 import 'model/nguoidung.dart';
 
+String ip =APIConstants.ip;
 void main() {
   runApp(const MyApp());
 }
@@ -45,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final Color backgroundColor2 = Color(0xFF4aa0d5);
   final Color highlightColor = Color(0xfff65aa3);
   final Color foregroundColor = Colors.white;
-  String ip ="http://172.21.11.229:3000/api";
+
 
   Future<bool> checkLogin(String email, String password) async {
     try {
