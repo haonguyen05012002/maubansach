@@ -31,7 +31,6 @@ Future<bool> signup(String email, String password) async {
         // Lỗi không xác định, hiển thị thông báo mặc định
         print('Unknown error occurred');
       }
-
       return false;
     }
   } catch (e) {
