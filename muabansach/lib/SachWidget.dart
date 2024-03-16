@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:muabansach/SachDetail.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'Sach.dart';
@@ -57,6 +58,10 @@ class SachWidgets extends StatelessWidget {
             onTap: () {
               // Hiển thị chi tiết sách khi người dùng nhấn vào
               print('Đang hiển thị chi tiết sách...');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SachDetail(sach: sach)),
+              );
             },
             title: Row(
               crossAxisAlignment: CrossAxisAlignment.start,

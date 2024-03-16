@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:muabansach/ProfileInfo.dart';
 import 'package:muabansach/UserSingleton.dart';
+import 'package:muabansach/main.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'SachWidget.dart';
 import 'Sach.dart';
 import 'model/GiohangPage.dart';
 
+// void main() {
+//   runApp(const Trangchu());
+// }
 
 class Trangchu extends StatefulWidget {
   const Trangchu({Key? key}) : super(key: key);
@@ -106,6 +111,10 @@ class _TrangchuState extends State<Trangchu> {
             IconButton(
               onPressed: () {
                 print('Button 2 pressed');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilePage())
+                );
               },
               icon: Icon(Icons.person_off_rounded),
             ),
@@ -121,7 +130,7 @@ class _TrangchuState extends State<Trangchu> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.blue, Colors.orange],
+              colors: [Colors.blue, Colors.white],
             ),
           ),
         ),

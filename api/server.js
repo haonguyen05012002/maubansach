@@ -239,6 +239,172 @@ app.get('/api/sach/:userId', (req, res) => {
     res.json(results);
   });
 });
+//get nguoidung qua id
+app.get('/api/nguoidung/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const sql = 'SELECT * FROM nguoidung WHERE id_nguoidung = ?';
+  db.query(sql, [userId], (error, results, fields) => {
+    if (error) {
+      console.error('Lỗi khi lấy thông tin người dùng:', error.message);
+      res.status(500).send('Lỗi khi lấy thông tin người dùng từ cơ sở dữ liệu');
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get('/api/sach/:id_sach', (req, res) => {
+  const id_sach = req.params.id_sach;
+  const query = 'SELECT * FROM sach WHERE id_sach = ?';
+
+  db.query(query, [id_sach], (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      if (result.length === 0) {
+        res.status(404).json({ error: 'Sách không được tìm thấy' });
+      } else {
+        res.json(result[0]); // Trả về thông tin của sách đầu tiên trong kết quả
+      }
+    }
+  });
+});
+
+//insert
+// Thêm dữ liệu mẫu cho bảng binhluan
+function insertSampleDataToBinhLuan() {
+  const insertQuery = 'INSERT INTO binhluan (id_sach, id_nguoidung, binh_luan) VALUES (?, ?, ?)';
+  const values = [
+    [1, 46, 'Bình luận 1'],
+    [1, 46, 'Bình luận 2'],
+    [1, 46, 'Bình luận 3'],
+    [1, 46, 'Bình luận 4'],
+    [1, 46, 'Bình luận 5'],
+  ];
+
+  values.forEach((val) => {
+    db.query(insertQuery, val, (err, result) => {
+      if (err) {
+        console.error('Lỗi khi chèn dữ liệu vào bảng binhluan:', err);
+      } else {
+        console.log('Đã chèn dữ liệu vào bảng binhluan.');
+      }
+    });
+  });
+}
+
+// Thêm dữ liệu mẫu cho bảng giohang
+function insertSampleDataToGioHang() {
+  const insertQuery = 'INSERT INTO giohang (id_sach, id_nguoidung) VALUES (?, ?)';
+  const values = [
+    [1, 46],
+    [2, 46],
+    [3, 46],
+    [4, 46],
+    [5, 46],
+  ];
+
+  values.forEach((val) => {
+    db.query(insertQuery, val, (err, result) => {
+      if (err) {
+        console.error('Lỗi khi chèn dữ liệu vào bảng giohang:', err);
+      } else {
+        console.log('Đã chèn dữ liệu vào bảng giohang.');
+      }
+    });
+  });
+}
+
+// Thêm dữ liệu mẫu cho bảng hoadon
+function insertSampleDataToHoaDon() {
+  const insertQuery = 'INSERT INTO hoadon (id_nguoidung, tienthanhtoan, trangthai, hinhthuctt) VALUES (?, ?, ?, ?)';
+  const values = [
+    [46, 100000, 1, 'Thanh toán khi nhận hàng'],
+    [46, 150000, 1, 'Thanh toán khi nhận hàng'],
+    [46, 120000, 1, 'Thanh toán khi nhận hàng'],
+    [46, 90000, 1, 'Thanh toán khi nhận hàng'],
+    [46, 110000, 1, 'Thanh toán khi nhận hàng'],
+  ];
+
+  values.forEach((val) => {
+    db.query(insertQuery, val, (err, result) => {
+      if (err) {
+        console.error('Lỗi khi chèn dữ liệu vào bảng hoadon:', err);
+      } else {
+        console.log('Đã chèn dữ liệu vào bảng hoadon.');
+      }
+    });
+  });
+}
+
+// Thêm dữ liệu mẫu cho bảng nhaxuatban
+function insertSampleDataToNhaXuatBan() {
+  const insertQuery = 'INSERT INTO nhaxuatban (ten_nhaxuatban) VALUES (?)';
+  const values = [
+    ['Nhà xuất bản 1'],
+    ['Nhà xuất bản 2'],
+    ['Nhà xuất bản 3'],
+    ['Nhà xuất bản 7'],
+    ['Nhà xuất bản 8'],
+  ];
+
+  values.forEach((val) => {
+    db.query(insertQuery, val, (err, result) => {
+      if (err) {
+        console.error('Lỗi khi chèn dữ liệu vào bảng nhaxuatban:', err);
+      } else {
+        console.log('Đã chèn dữ liệu vào bảng nhaxuatban.');
+      }
+    });
+  });
+}
+
+// Thêm dữ liệu mẫu cho bảng nguoidung
+function insertSampleDataToNguoiDung() {
+  const insertQuery = 'INSERT INTO nguoidung (email, mat_khau, admin) VALUES (?, ?, ?)';
+  const values = [
+    ['2@gmail.com', '1', 0],
+    ['3@gmail.com', '1', 0],
+    ['4@gmail.com', '1', 0],
+    ['5@gmail.com', '1', 0],
+    ['6@gmail.com', '1', 0],
+  ];
+
+  values.forEach((val) => {
+    db.query(insertQuery, val, (err, result) => {
+      if (err) {
+        console.error('Lỗi khi chèn dữ liệu vào bảng nguoidung:', err);
+      } else {
+        console.log('Đã chèn dữ liệu vào bảng nguoidung.');
+      }
+    });
+  });
+}
+
+
+function insertSampleDataToSach() {
+  const insertQuery = 'INSERT INTO sach (tieu_de, ngay_xuat_ban, id_theloai, mo_ta, hinh_bia, noidung, id_nhaxuatban, id_tacgia, danhgia, gia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [
+    ['Tieu de 1', '2022-01-01', 1, 'Mo ta sach 1', 'images/image1.jpg', 'Noi dung sach 1', 1, 1, 0, 100000],
+    ['Tieu de 2', '2022-01-02', 1, 'Mo ta sach 2', 'images/image2.jpg', 'Noi dung sach 2', 1, 1, 0, 150000],
+    ['Tieu de 3', '2022-01-03', 1, 'Mo ta sach 3', 'images/image3.jpg', 'Noi dung sach 3', 1, 1, 0, 120000],
+    ['Tieu de 4', '2022-01-04', 1, 'Mo ta sach 4', 'images/image4.jpg', 'Noi dung sach 4', 1, 1, 0, 90000],
+    ['Tieu de 5', '2022-01-05', 1, 'Mo ta sach 5', 'images/image5.jpg', 'Noi dung sach 5', 1, 1, 0, 110000],
+  ];
+
+  values.forEach((val) => {
+    db.query(insertQuery, val, (err, result) => {
+      if (err) {
+        console.error('Lỗi khi chèn dữ liệu vào bảng sach:', err);
+      } else {
+        console.log('Đã chèn dữ liệu vào bảng sach.');
+      }
+    });
+  });
+}
+
+// Gọi các hàm insert dữ liệu cho từng bảng
 
 
 

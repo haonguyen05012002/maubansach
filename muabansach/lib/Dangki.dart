@@ -90,7 +90,7 @@ class _DangkiState extends State<Dangki> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text("Sign Up"),
+        title: Text("Smart Book"),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -125,6 +125,27 @@ class _DangkiState extends State<Dangki> {
                 ),
               ),
             ),
+
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin:
+              const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
+              alignment: Alignment.center,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Text("ĐĂNG KÝ", textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),),
+
+                  ),
+                ],
+              ),
+            ),
             Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -156,7 +177,7 @@ class _DangkiState extends State<Dangki> {
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: ' Your email',
+                        hintText: ' Nhập email của bạn',
                         hintStyle: TextStyle(color: foregroundColor),
                       ),
                     ),
@@ -195,7 +216,7 @@ class _DangkiState extends State<Dangki> {
                       textAlign: TextAlign.left,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: ' Your password',
+                        hintText: ' Mật khẩu',
                         hintStyle: TextStyle(color: foregroundColor),
                       ),
                     ),
@@ -234,7 +255,7 @@ class _DangkiState extends State<Dangki> {
                       textAlign: TextAlign.left,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: ' Confirm password',
+                        hintText: ' Nhập lại mật khẩu',
                         hintStyle: TextStyle(color: foregroundColor),
                       ),
                     ),
@@ -261,7 +282,7 @@ class _DangkiState extends State<Dangki> {
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(emaildk.text +
-                                    " đã được đăng ki. vui lòng chọn email khác !"),
+                                    " đã được đăng ký. Vui lòng chọn email khác!"),
                               )
                           );
                         } else {
@@ -282,7 +303,7 @@ class _DangkiState extends State<Dangki> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                      "Đăng kí thất bại . vui lòng thử lại $result" +
+                                      "Đăng kí thất bại. Vui lòng thử lại!" +
                                           emaildk.text + matkhaudk.text),
                                 ),
                               );
@@ -291,7 +312,7 @@ class _DangkiState extends State<Dangki> {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                      "Mật khẩu nhập lại không trùng"),
+                                      "Mật khẩu nhập lại không trùng khớp!"),
                                 )
                             );
                           }
@@ -299,7 +320,7 @@ class _DangkiState extends State<Dangki> {
 
                       },
                       child: Text(
-                        "Sign Up",
+                        "Đăng ký",
                         style: TextStyle(color: foregroundColor),
                       ),
                     ),
@@ -318,9 +339,13 @@ class _DangkiState extends State<Dangki> {
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                       ),
-                      onPressed: () => {},
+                      onPressed: () => {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyApp())
+                      )},
                       child: Text(
-                        "Đã có tài khoảng? Sign In",
+                        "Đã có tài khoản? Đăng nhập",
                         style: TextStyle(color: foregroundColor),
                       ),
                     ),

@@ -17,7 +17,7 @@ class SachDetail extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.blue, Colors.orange],)),
+                colors: [Colors.blue, Colors.white],)),
           child: Center(
 
 
