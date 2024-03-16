@@ -18,7 +18,7 @@ Future<bool> signup(String email, String password) async {
     );
 
     if (response.statusCode == 200) {
-      // Đăng ký thành công
+      // Đăng ký thành công.
       return true;
     } else {
       // Xử lý lỗi khi đăng ký không thành công
