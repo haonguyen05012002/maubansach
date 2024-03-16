@@ -122,7 +122,7 @@ class _TrangchuState extends State<Trangchu> {
         ),
         body: Container(
           child: _sachs.isNotEmpty
-              ? SachWidgets(sachs: _sachs) // Truyền hàm addToCart vào SachWidgets
+              ? SachWidgets(sachs: _sachs)
               : const Center(
             child: Text("No books found"),
           ),

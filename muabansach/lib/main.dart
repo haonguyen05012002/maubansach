@@ -40,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController emaildn = TextEditingController();
   TextEditingController matkhaudn = TextEditingController();
 
-//static String tag = 'login-page';
 
   final Color backgroundColor1 = Color(0xFF4aa0d5);
   final Color backgroundColor2 = Color(0xFF4aa0d5);
@@ -266,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         backgroundColor: Colors.lightBlue,
                       ),
                       onPressed: () async {
-                        // Kiểm tra đăng nhập khi người dùng nhấn nút "Sign In"
+
                         bool result =
                             await checkLogin(emaildn.text, matkhaudn.text);
 

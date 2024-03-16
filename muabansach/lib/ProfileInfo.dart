@@ -104,8 +104,8 @@ class _ProfilePageState extends State<ProfilePage> {
              mainAxisAlignment: MainAxisAlignment.center,
              children: [
                Container(
-                 width: 150, // Chiều rộng của khung hình chữ nhật
-                 height: 200, // Chiều cao của khung hình chữ nhật
+                 width: 150,
+                 height: 200,
                  decoration: BoxDecoration(
                    color: Colors.white, // Màu nền của khung hình chữ nhật
                    boxShadow: [

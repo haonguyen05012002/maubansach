@@ -109,30 +109,30 @@ class _GioHangPageState extends State<Giohang> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.blue, ]
-          )
+            gradient: LinearGradient(
+                colors: [Colors.white, Colors.blue, ]
+            )
         ),
-      child: sachList.isNotEmpty
-      ? ListView.builder(
-      itemCount: sachList.length,
-        itemBuilder: (context, index) {
-          final sach = sachList[index];
-          return ListTile(
-            title: Text(sach.tieu_de),
-            subtitle: Text('Giá: ${sach.gia} VNĐ'),
-            trailing: IconButton( // Thêm nút xóa vào phần trailing của ListTile
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                _removeItemFromCart(sach.id_sach); // Gọi hàm xóa sản phẩm khi nhấn vào nút xóa
-              },
-            ),
-          );
-        },
-      )
+        child: sachList.isNotEmpty
+            ? ListView.builder(
+          itemCount: sachList.length,
+          itemBuilder: (context, index) {
+            final sach = sachList[index];
+            return ListTile(
+              title: Text(sach.tieu_de),
+              subtitle: Text('Giá: ${sach.gia} VNĐ'),
+              trailing: IconButton( // Thêm nút xóa vào phần trailing của ListTile
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  _removeItemFromCart(sach.id_sach);
+                },
+              ),
+            );
+          },
+        )
             : Center(
-        child: Text('Không có sản phẩm trong giỏ hàng'),
-    ),
+          child: Text('Không có sản phẩm trong giỏ hàng'),
+        ),
       ),
     );
   }
