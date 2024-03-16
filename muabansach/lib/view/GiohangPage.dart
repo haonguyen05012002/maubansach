@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:muabansach/UserSingleton.dart';
-import 'package:muabansach/model/Sach.dart';
+import 'package:muabansach/model/SachTemp.dart';
+
+String ip ="http://172.21.11.229:3000/api";
 
 class Giohang extends StatefulWidget {
   @override
@@ -36,7 +38,7 @@ class _GioHangPageState extends State<Giohang> {
   Future<List<Sach>> fetchBooksInCart(int userId) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/sach/$userId'),
+        Uri.parse('$ip/sach/$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -59,7 +61,7 @@ class _GioHangPageState extends State<Giohang> {
   Future<void> _removeItemFromCart(int sachId) async {
     try {
       final response = await http.delete(
-        Uri.parse('http://localhost:3000/api/giohang'), // Thay đổi đường dẫn API
+        Uri.parse('$ip/giohang'), // Thay đổi đường dẫn API
         body: json.encode({
           'id_nguoidung': UserSingleton().getUserId(),
           'id_sach': sachId,
@@ -103,6 +105,14 @@ class _GioHangPageState extends State<Giohang> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Tính tổng giá tiền của tất cả sản phẩm trong giỏ hàng
+    int totalAmount = 0;
+    sachList.forEach((sach) {
+      totalAmount += sach.gia;
+    });
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Giỏ hàng'),
@@ -113,26 +123,43 @@ class _GioHangPageState extends State<Giohang> {
                 colors: [Colors.white, Colors.blue, ]
             )
         ),
-        child: sachList.isNotEmpty
-            ? ListView.builder(
-          itemCount: sachList.length,
-          itemBuilder: (context, index) {
-            final sach = sachList[index];
-            return ListTile(
-              title: Text(sach.tieu_de),
-              subtitle: Text('Giá: ${sach.gia} VNĐ'),
-              trailing: IconButton( // Thêm nút xóa vào phần trailing của ListTile
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  _removeItemFromCart(sach.id_sach);
-                },
-              ),
-            );
-          },
+        child:
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(child:
+            sachList.isNotEmpty
+                ? ListView.builder(
+              itemCount: sachList.length,
+              itemBuilder: (context, index) {
+                final sach = sachList[index];
+                return ListTile(
+                  title: Text(sach.tieu_de),
+                  subtitle: Text('Giá: ${sach.gia} VNĐ'),
+                  trailing: IconButton( // Thêm nút xóa vào phần trailing của ListTile
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      _removeItemFromCart(sach.id_sach);
+                    },
+                  ),
+                );
+              },
+            )
+                : Center(
+              child: Text('Không có sản phẩm trong giỏ hàng'),
+            ),),
+
+            Padding(
+            padding: EdgeInsets.all(16.0),
+    child: Text(
+    'Tổng giá tiền: $totalAmount VNĐ',
+    style: TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 18.0,
+            )))
+    ],
         )
-            : Center(
-          child: Text('Không có sản phẩm trong giỏ hàng'),
-        ),
+        
       ),
     );
   }

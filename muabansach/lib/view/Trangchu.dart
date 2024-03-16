@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:muabansach/ProfileInfo.dart';
+import 'package:muabansach/view/ProfileInfo.dart';
 import 'package:muabansach/UserSingleton.dart';
-import 'package:muabansach/main.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'SachWidget.dart';
-import 'Sach.dart';
-import 'model/GiohangPage.dart';
+import '../model/Sach.dart';
+import 'GiohangPage.dart';
 
-// void main() {
-//   runApp(const Trangchu());
-// }
 
+String ip ="http://172.21.11.229:3000/api";
 class Trangchu extends StatefulWidget {
   const Trangchu({Key? key}) : super(key: key);
 
@@ -60,7 +57,7 @@ class _TrangchuState extends State<Trangchu> {
 
   Future<List<Sach>> _fetchAllBooks() async {
     final response = await http.get(
-      Uri.parse("http://localhost:3000/api/sach"),
+      Uri.parse("$ip/sach"),
     );
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);

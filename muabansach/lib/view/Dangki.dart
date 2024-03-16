@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:muabansach/Trangchu.dart';
+import 'package:muabansach/view/Trangchu.dart';
 import 'Dangki.dart';
-import 'main.dart';
-import 'model/nguoidung.dart';
+import '../model/nguoidung.dart';
+import 'package:muabansach/main.dart';
 
 Future<bool> signup(String email, String password) async {
   try {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/api/addnguoidung'),
+      Uri.parse('$ip/addnguoidung'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'email': email, 'mat_khau': password}),
     );
@@ -40,7 +40,7 @@ Future<bool> signup(String email, String password) async {
 Future<bool> checkTK(String email, ) async {
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/nguoidung'),
+      Uri.parse('$ip/nguoidung'),
     );
 
     if (response.statusCode == 200) {

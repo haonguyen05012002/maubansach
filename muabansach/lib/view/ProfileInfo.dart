@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'model/User.dart';
-import 'UserSingleton.dart';
-
+import '../model/User.dart';
+import '../UserSingleton.dart';
+String ip ="http://172.21.11.229:3000/api";
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -30,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final userId = UserSingleton().getUserId();
       if (userId != null) {
         final response = await http.get(
-          Uri.parse('http://localhost:3000/api/nguoidung/$userId'),
+          Uri.parse('$ip/nguoidung/$userId'),
         );
         if (response.statusCode == 200) {
           final userData = jsonDecode(response.body);

@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:muabansach/UserSingleton.dart';
-import 'Dangki.dart';
-import 'Trangchu.dart';
+import 'view/Dangki.dart';
+import 'view/Trangchu.dart';
 import 'package:http/http.dart' as http;
 import 'model/nguoidung.dart';
 
@@ -45,11 +45,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final Color backgroundColor2 = Color(0xFF4aa0d5);
   final Color highlightColor = Color(0xfff65aa3);
   final Color foregroundColor = Colors.white;
+  String ip ="http://172.21.11.229:3000/api";
 
   Future<bool> checkLogin(String email, String password) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/nguoidung'),
+        Uri.parse('$ip/nguoidung'),
       );
 
       if (response.statusCode == 200) {
@@ -78,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<int?> findUserIdByEmail(String email) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/nguoidung'),
+        Uri.parse('$ip/nguoidung'),
       );
 
       if (response.statusCode == 200) {

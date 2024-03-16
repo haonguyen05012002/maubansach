@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:muabansach/SachDetail.dart';
+import 'package:muabansach/view/SachDetail.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'Sach.dart';
-import 'UserSingleton.dart';
+import '../model/Sach.dart';
+import '../UserSingleton.dart';
 
+String ip ="http://172.21.11.229:3000/api";
 class SachWidgets extends StatelessWidget {
   final List<Sach> sachs;
 
+
   const SachWidgets({Key? key, required this.sachs}) : super(key: key);
+
 
   Future<void> addToCart(int userId, int sachId) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/giohang'),
+        Uri.parse('$ip/giohang'),
         body: {
           'id_nguoidung': userId.toString(),
           'id_sach': sachId.toString(),
