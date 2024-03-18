@@ -1,3 +1,6 @@
+
+const path = require('path'); 
+const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors'); 
@@ -286,6 +289,20 @@ app.get('/api/timsach', (req, res) => {
       } else {
         res.json(result); // Trả về toàn bộ kết quả của sách thỏa mãn điều kiện
       }
+    }
+  });
+});
+
+app.get('/api/images/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, 'images', imageName);
+
+  fs.readFile(imagePath, (err, data) => {
+    if (err) {
+      res.status(404).send('Image not found');
+    } else {
+      res.writeHead(200, { 'Content-Type': 'image/jpeg' }); 
+      res.end(data);
     }
   });
 });
