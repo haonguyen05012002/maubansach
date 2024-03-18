@@ -270,6 +270,27 @@ app.get('/api/sach/:id_sach', (req, res) => {
     }
   });
 });
+app.get('/api/timsach', (req, res) => {
+  const ten_sach = req.query.ten_sach; // Sử dụng req.query để lấy tham số truy vấn từ URL
+
+  // Sử dụng dấu '?' trong query và truyền giá trị ten_sach vào mảng params
+  const query = 'SELECT * FROM sach WHERE tieu_de LIKE ?';
+
+  db.query(query, [`%${ten_sach}%`], (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      if (result.length === 0) {
+        res.status(404).json({ error: 'Sách không được tìm thấy' });
+      } else {
+        res.json(result); // Trả về toàn bộ kết quả của sách thỏa mãn điều kiện
+      }
+    }
+  });
+});
+
+
 
 //insert
 // Thêm dữ liệu mẫu cho bảng binhluan
