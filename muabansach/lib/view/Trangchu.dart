@@ -97,6 +97,7 @@ class _TrangchuState extends State<Trangchu> {
         appBar: AppBar(
           title: const Text("Smart Books"),
           centerTitle: false,
+
           flexibleSpace: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 150.0),
             child: Row(
@@ -105,11 +106,11 @@ class _TrangchuState extends State<Trangchu> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(16.0),
                     ),
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: "Search...",
+                        hintText: "Tìm kếm",
                         contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                         border: InputBorder.none,
                       ),

@@ -8,13 +8,14 @@ import 'view/Trangchu.dart';
 import 'package:http/http.dart' as http;
 import 'model/nguoidung.dart';
 
-String ip =APIConstants.ip;
+String ip = APIConstants.ip;
+
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -42,12 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController emaildn = TextEditingController();
   TextEditingController matkhaudn = TextEditingController();
 
-
   final Color backgroundColor1 = Color(0xFF4aa0d5);
   final Color backgroundColor2 = Color(0xFF4aa0d5);
-  final Color highlightColor = Color(0xfff65aa3);
   final Color foregroundColor = Colors.white;
-
 
   Future<bool> checkLogin(String email, String password) async {
     try {
@@ -120,17 +118,17 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment(1.0, 0.0),
-            colors: [backgroundColor1, backgroundColor2],
-            tileMode: TileMode.repeated,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue, Colors.white],
           ),
         ),
-        height: MediaQuery.of(context).size.height,
-        child: Column(
+        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 40),
+        child: ListView(
+          shrinkWrap: true,
           children: <Widget>[
             Container(
-              padding: const EdgeInsets.only(top: 100.0, bottom: 10.0),
+              padding: const EdgeInsets.only(top: 60.0, bottom: 10.0),
               child: Center(
                 child: Column(
                   children: <Widget>[
@@ -142,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
                           radius: 48.0,
-                         // child: Image.asset('assets/lock.png'),
+                          // child: Image.asset('assets/lock.png'),
                         ),
                       ),
                     ),
@@ -150,28 +148,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-
             Container(
               width: MediaQuery.of(context).size.width,
               margin:
-              const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
+                  const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
               alignment: Alignment.center,
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
-                    child: Text("ĐĂNG NHẬP", textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),),
-
+                    child: Text(
+                      "ĐĂNG NHẬP",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-
             Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -190,8 +188,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Padding(
-                    padding:
-                        EdgeInsets.only(top: 20.0, bottom: 10.0, right: 0.0),
+                    padding: const EdgeInsets.only(
+                        top: 20.0, bottom: 10.0, right: 0.0),
                     child: Icon(
                       Icons.email,
                       color: foregroundColor,
@@ -231,8 +229,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Padding(
-                    padding:
-                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 0.0),
+                    padding: const EdgeInsets.only(
+                        top: 10.0, bottom: 10.0, right: 0.0),
                     child: Icon(
                       Icons.lock_open,
                       color: foregroundColor,
@@ -268,7 +266,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         backgroundColor: Colors.lightBlue,
                       ),
                       onPressed: () async {
-
                         bool result =
                             await checkLogin(emaildn.text, matkhaudn.text);
 
@@ -333,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: TextButton(
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 20.0, horizontal: 20.0),
+                            vertical: 10.0, horizontal: 20.0),
                       ),
                       onPressed: () => {
                         Navigator.push(

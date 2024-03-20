@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:muabansach/main.dart';
 import 'dart:convert';
 
 import '../APIConstant.dart';
@@ -128,6 +129,16 @@ class _ProfilePageState extends State<ProfilePage> {
                Text("ID Người dùng: ${_user.idNguoiDung}", style: TextStyle(color: Colors.white, fontSize: 25), textAlign: TextAlign.left,),
 
                Text("Email: ${_user.email}", style: TextStyle(color: Colors.white, fontSize: 20),textAlign: TextAlign.left,),
+               TextButton(
+                 onPressed: ()
+                 {
+                 Navigator.push(context, MaterialPageRoute(builder: (context)=>MyApp()));
+               },
+                 style: TextButton.styleFrom(
+                   padding: const EdgeInsets.symmetric(
+                       vertical: 20.0, horizontal: 15.0),
+                   backgroundColor: Colors.lightBlue,
+                 ), child: Text("Đăng xuất"),)
 
                // Thêm các thông tin khác của cocktail tại đây (nếu cần)
              ],
@@ -136,32 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
          ),
        )
-      // _isLoading
-      //     ? Center(child: CircularProgressIndicator())
-      //     : _hasError
-      //     ? Center(child: Text('Error loading user'))
-      //     : _user != null
-      //     ? Padding(
-      //   padding: EdgeInsets.all(16.0),
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       Text(
-      //         'Name: ${_user.idNguoiDung}',
-      //         style: TextStyle(fontSize: 20),
-      //       ),
-      //       SizedBox(height: 10),
-      //       Text(
-      //         'Email: ${_user.email}',
-      //         style: TextStyle(fontSize: 18),
-      //       ),
-      //       SizedBox(height: 10),
-      //
-      //       // Add more fields as needed
-      //     ],
-      //   ),
-      // )
-      //     : Center(child: Text('No user found')),
+
     );
   }
 }
