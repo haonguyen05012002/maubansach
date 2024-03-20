@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 13, 2024 at 03:04 AM
+-- Generation Time: Mar 20, 2024 at 12:58 PM
 -- Server version: 8.0.31
 -- PHP Version: 8.0.26
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `binhluan` (
   PRIMARY KEY (`id_binhluan`),
   KEY `id_sach` (`id_sach`),
   KEY `id_nguoidung` (`id_nguoidung`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -54,6 +54,13 @@ CREATE TABLE IF NOT EXISTS `giohang` (
   KEY `id_sach` (`id_sach`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `giohang`
+--
+
+INSERT INTO `giohang` (`id`, `id_sach`, `id_nguoidung`) VALUES
+(0, 47, 46);
+
 -- --------------------------------------------------------
 
 --
@@ -69,7 +76,15 @@ CREATE TABLE IF NOT EXISTS `hoadon` (
   `hinhthuctt` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id_nguoidung` (`id_nguoidung`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `hoadon`
+--
+
+INSERT INTO `hoadon` (`id`, `id_nguoidung`, `tienthanhtoan`, `trangthai`, `hinhthuctt`) VALUES
+(5, 48, 200000, 1, 'MOMO'),
+(6, 49, 150000, 1, 'ZALOPAY');
 
 -- --------------------------------------------------------
 
@@ -84,14 +99,20 @@ CREATE TABLE IF NOT EXISTS `nguoidung` (
   `mat_khau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `admin` bit(1) NOT NULL,
   PRIMARY KEY (`id_nguoidung`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `nguoidung`
 --
 
 INSERT INTO `nguoidung` (`id_nguoidung`, `email`, `mat_khau`, `admin`) VALUES
-(46, '1@gmail.com', '1', b'0');
+(46, '1@gmail.com', '1', b'0'),
+(47, 'admin@example.com', 'adminpass', b'1'),
+(48, 'user1@example.com', 'user1pass', b'0'),
+(49, 'user2@example.com', 'user2pass', b'0'),
+(50, 'admin@example.com', 'adminpass', b'1'),
+(51, 'user1@example.com', 'user1pass', b'0'),
+(52, 'user2@example.com', 'user2pass', b'0');
 
 -- --------------------------------------------------------
 
@@ -104,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `nhaxuatban` (
   `id_nhaxuatban` int NOT NULL AUTO_INCREMENT,
   `ten_nhaxuatban` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id_nhaxuatban`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `nhaxuatban`
@@ -115,10 +136,7 @@ INSERT INTO `nhaxuatban` (`id_nhaxuatban`, `ten_nhaxuatban`) VALUES
 (2, 'Trẻ'),
 (3, 'NXB Giáo Dục'),
 (7, 'STU'),
-(8, 'Kim Đồng'),
-(9, 'Trẻ'),
-(10, 'NXB Giáo Dục'),
-(11, 'STU');
+(10, 'NXB Giáo Dục');
 
 -- --------------------------------------------------------
 
@@ -143,7 +161,22 @@ CREATE TABLE IF NOT EXISTS `sach` (
   KEY `id_theloai` (`id_theloai`),
   KEY `id_tacgia` (`id_tacgia`),
   KEY `id_nhaxuatban` (`id_nhaxuatban`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `sach`
+--
+
+INSERT INTO `sach` (`id_sach`, `tieu_de`, `ngay_xuat_ban`, `id_theloai`, `mo_ta`, `hinh_bia`, `noidung`, `id_nhaxuatban`, `id_tacgia`, `danhgia`, `gia`) VALUES
+(47, 'Tắt đèn', '2005-09-10', 18, 'Tiểu thuyết tâm lý', 'tat-den.jpg', 'Nội dung của cuốn sách Tắt đèn...', 1, 12, 4, 80000),
+(48, 'Harry Potter và Hòn đá Phù thủy', '1997-06-26', 19, 'Tiểu thuyết phép thuật', 'harry-potter.jpg', 'Nội dung của cuốn sách Harry Potter...', 2, 13, 5, 120000),
+(49, 'Bác Hồ và Hà Nội', '2020-01-01', 20, 'Sách lịch sử', 'bac-ho.jpg', 'Nội dung của cuốn sách Bác Hồ và Hà Nội...', 3, 14, 5, 100000),
+(62, 'Dấu Chân Trên Cát', '2010-01-15', 18, 'Cuốn sách tâm linh viết về hành trình tìm kiếm ý nghĩa của cuộc sống.', 'dau_chan_tren_cat.jpg', 'Nội dung cuốn sách Dấu Chân Trên Cát...', 2, 14, 4, 120000),
+(63, 'Cuộc Phiêu Lưu Của Alice Ở Xứ Sở Thần Tiên', '1865-11-26', 18, 'Một trong những cuốn sách kinh điển của văn học thiếu nhi.', 'alice_oo_xu_so_than_tien.jpg', 'Nội dung cuốn sách Cuộc Phiêu Lưu Của Alice Ở Xứ Sở Thần Tiên...', 3, 12, 5, 150000),
+(64, 'Người Tìm Hạnh Phúc', '2017-08-08', 20, 'Cuốn sách tự truyện của tác giả Laurent Gounelle, chia sẻ về hành trình tìm kiếm hạnh phúc.', 'nguoi_tim_hanh_phuc.jpg', 'Nội dung cuốn sách Người Tìm Hạnh Phúc...', 1, 12, 4, 135000),
+(65, 'Thiên Long Bát Bộ', '1994-01-01', 19, 'Một trong những tác phẩm tiên hiệp nổi tiếng của Kim Dung, kể về cuộc phiêu lưu của Thiên Long Bát Bộ.', 'thien_long_bat_bo.jpg', 'Nội dung cuốn sách Thiên Long Bát Bộ...', 1, 14, 5, 200000),
+(66, 'Đấu La Đại Lục', '2000-05-01', 19, 'Cuốn tiểu thuyết tiên hiệp của Dương Thất Thất, một trong những tác phẩm nổi tiếng của văn học Trung Quốc.', 'dau_la_dai_luc.jpg', 'Nội dung cuốn sách Đấu La Đại Lục...', 7, 13, 4, 180000),
+(67, 'Tam Quốc Diễn Nghĩa', '0000-00-00', 18, 'Một trong những tác phẩm lịch sử võ hiệp nổi tiếng của Trung Quốc, kể về thời kỳ Tam Quốc.', 'tam_quoc_dien_nghia.jpg', 'Nội dung cuốn sách Tam Quốc Diễn Nghĩa...', 10, 12, 5, 250000);
 
 -- --------------------------------------------------------
 
@@ -157,7 +190,16 @@ CREATE TABLE IF NOT EXISTS `tacgia` (
   `ten_tacgia` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay_sinh` date DEFAULT NULL,
   PRIMARY KEY (`id_tacgia`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tacgia`
+--
+
+INSERT INTO `tacgia` (`id_tacgia`, `ten_tacgia`, `ngay_sinh`) VALUES
+(12, 'Nguyễn Nhật Ánh', '1971-05-15'),
+(13, 'J.K. Rowling', '1965-07-31'),
+(14, 'Hồ Chí Minh', '1890-05-19');
 
 -- --------------------------------------------------------
 
@@ -170,7 +212,16 @@ CREATE TABLE IF NOT EXISTS `theloai` (
   `id_theloai` int NOT NULL AUTO_INCREMENT,
   `ten_theloai` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id_theloai`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `theloai`
+--
+
+INSERT INTO `theloai` (`id_theloai`, `ten_theloai`) VALUES
+(18, 'Tiểu thuyết'),
+(19, 'Khoa học'),
+(20, 'Lịch sử');
 
 -- --------------------------------------------------------
 
