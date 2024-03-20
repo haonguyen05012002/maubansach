@@ -1,3 +1,6 @@
+
+const path = require('path'); 
+const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors'); 
@@ -66,7 +69,7 @@ app.get('/api/binhluan', (req, res) => {
 // Route mẫu để lấy danh sách nhà xuất bản
 app.get('/api/nhaxuatban', (req, res) => {
   const query = 'SELECT * FROM nhaxuatban';
-
+console.log('sdasdsdadsdsdsdsfdsfsfsd');
   db.query(query, (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
@@ -168,7 +171,7 @@ app.get('/api/nguoidung', (req, res) => {
 // Route mẫu để lấy danh sách thể loại
 app.get('/api/theloai', (req, res) => {
   const query = 'SELECT * FROM theloai';
-
+  
   db.query(query, (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
@@ -270,6 +273,54 @@ app.get('/api/sach/:id_sach', (req, res) => {
     }
   });
 });
+app.get('/api/timsach', (req, res) => {
+  const ten_sach = req.query.ten_sach; // Sử dụng req.query để lấy tham số truy vấn từ URL
+
+  // Sử dụng dấu '?' trong query và truyền giá trị ten_sach vào mảng params
+  const query = 'SELECT * FROM sach WHERE tieu_de LIKE ?';
+
+  db.query(query, [`%${ten_sach}%`], (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      if (result.length === 0) {
+        res.status(404).json({ error: 'Sách không được tìm thấy' });
+      } else {
+        res.json(result); // Trả về toàn bộ kết quả của sách thỏa mãn điều kiện
+      }
+    }
+  });
+});
+// lấy hình
+app.get('/api/images/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, 'images', imageName);
+
+  fs.readFile(imagePath, (err, data) => {
+    if (err) {
+      res.status(404).send('Image not found');
+    } else {
+      res.writeHead(200, { 'Content-Type': 'image/jpeg' }); 
+      res.end(data);
+    }
+  });
+});
+//lấy 10 cuốn sách mới nhất
+app.get('/api/limitsach', (req, res) => {
+  const query = 'SELECT * FROM sach ORDER BY id_sach DESC LIMIT 10'; // Sắp xếp theo id từ lớn đến nhỏ và giới hạn 10 kết quả
+ 
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+
 
 //insert
 // Thêm dữ liệu mẫu cho bảng binhluan

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:muabansach/UserSingleton.dart';
+import 'package:muabansach/view/TrangchuWidget.dart';
 import 'APIConstant.dart';
 import 'view/Dangki.dart';
 import 'view/Trangchu.dart';
@@ -268,14 +269,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () async {
                         bool result =
                             await checkLogin(emaildn.text, matkhaudn.text);
-
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => TrangChuWidget()),
+                        );
                         // Nếu đăng nhập thành công, chuyển đến trang chủ
                         if (result) {
                           int? userID = await findUserIdByEmail(emaildn.text);
                           UserSingleton().setUserId(userID!);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Trangchu()),
+                            MaterialPageRoute(builder: (context) => TrangChuWidget()),
                           );
                         } else {
                           // Hiển thị thông báo lỗi khi đăng nhập thất bại

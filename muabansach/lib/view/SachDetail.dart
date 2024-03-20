@@ -31,7 +31,7 @@ class SachDetail extends StatelessWidget {
                     color: Colors.white, // Màu nền của khung hình chữ nhật
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.5), // Màu đổ bóng
+                        color: Colors.grey.withOpacity(0.5), // Màu đổ bón
                         spreadRadius: 5, // Độ lan rộng của đổ bóng
                         blurRadius: 7, // Độ mờ của đổ bóng
                         offset: Offset(0, 3), // Vị trí của đổ bóng
