@@ -69,7 +69,7 @@ app.get('/api/binhluan', (req, res) => {
 // Route mẫu để lấy danh sách nhà xuất bản
 app.get('/api/nhaxuatban', (req, res) => {
   const query = 'SELECT * FROM nhaxuatban';
-
+console.log('sdasdsdadsdsdsdsfdsfsfsd');
   db.query(query, (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
@@ -171,7 +171,7 @@ app.get('/api/nguoidung', (req, res) => {
 // Route mẫu để lấy danh sách thể loại
 app.get('/api/theloai', (req, res) => {
   const query = 'SELECT * FROM theloai';
-
+  
   db.query(query, (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
@@ -292,7 +292,7 @@ app.get('/api/timsach', (req, res) => {
     }
   });
 });
-
+// lấy hình
 app.get('/api/images/:imageName', (req, res) => {
   const imageName = req.params.imageName;
   const imagePath = path.join(__dirname, 'images', imageName);
@@ -303,6 +303,19 @@ app.get('/api/images/:imageName', (req, res) => {
     } else {
       res.writeHead(200, { 'Content-Type': 'image/jpeg' }); 
       res.end(data);
+    }
+  });
+});
+//lấy 10 cuốn sách mới nhất
+app.get('/api/limitsach', (req, res) => {
+  const query = 'SELECT * FROM sach ORDER BY id_sach DESC LIMIT 10'; // Sắp xếp theo id từ lớn đến nhỏ và giới hạn 10 kết quả
+ 
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result);
     }
   });
 });

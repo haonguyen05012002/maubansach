@@ -25,19 +25,24 @@ class Sach {
     required this.gia
   });
 
+  @override
+  String toString() {
+    return 'Sach{id_sach: $id_sach, tieu_de: $tieu_de, ngay_xuat_ban: $ngay_xuat_ban, id_theloai: $id_theloai, mo_ta: $mo_ta, hinh_bia: $hinh_bia, noidung: $noidung, id_nhaxuatban: $id_nhaxuatban, id_tacgia: $id_tacgia, danhgia: $danhgia, gia: $gia}';
+  }
+
   factory Sach.fromJson(Map<String, dynamic> json) {
     return Sach(
       id_sach: json["id_sach"],
-      tieu_de : json["tieu_de"],
-      ngay_xuat_ban : json["ngay_xuat_ban"],
-      id_theloai : json["id_theloai"],
-      mo_ta : json["mo_ta"],
-      hinh_bia : json["hinh_bia"],
-      noidung : json["noidung"],
-      id_nhaxuatban : json["id_nhaxuatban"],
-      id_tacgia : json["id_tacgia"],
-      danhgia : json["danhgia"],
-      gia : json["gia"],
+      tieu_de: json["tieu_de"],
+      ngay_xuat_ban: DateTime.parse(json["ngay_xuat_ban"]), // Parsing the date string to DateTime
+      id_theloai: json["id_theloai"],
+      mo_ta: json["mo_ta"],
+      hinh_bia: json["hinh_bia"],
+      noidung: json["noidung"],
+      id_nhaxuatban: json["id_nhaxuatban"],
+      id_tacgia: json["id_tacgia"],
+      danhgia: json["danhgia"],
+      gia: json["gia"],
     );
   }
 }
