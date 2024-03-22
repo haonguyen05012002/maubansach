@@ -66,10 +66,10 @@ app.get('/api/binhluan', (req, res) => {
     }
   });
 });
+
 // Route mẫu để lấy danh sách nhà xuất bản
 app.get('/api/nhaxuatban', (req, res) => {
   const query = 'SELECT * FROM nhaxuatban';
-console.log('sdasdsdadsdsdsdsfdsfsfsd');
   db.query(query, (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
@@ -181,6 +181,34 @@ app.get('/api/theloai', (req, res) => {
     }
   });
 });
+app.get('/api/nxbsach/:id_nhaxuatban', (req, res) => {
+  const id_nhaxuatban = req.params.id_nhaxuatban;
+  const query = 'SELECT * FROM sach WHERE id_nhaxuatban = ?';
+  
+  db.query(query, [id_nhaxuatban], (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+// API để lấy thông tin sách theo thể loại
+app.get('/api/sach/:id_theloai', (req, res) => {
+  const id_theloai = req.params.id_theloai;
+  const query = 'SELECT * FROM sach WHERE id_theloai = ?';
+  
+  db.query(query, [id_theloai], (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
 // Route mẫu để lấy danh sách voucher
 app.get('/api/voucher', (req, res) => {
   const query = 'SELECT * FROM voucher';

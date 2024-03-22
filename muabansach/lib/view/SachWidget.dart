@@ -1,42 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:muabansach/view/SachDetail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
-import 'dart:convert';
 import '../APIConstant.dart';
 import '../model/Sach.dart';
 import '../UserSingleton.dart';
 
-String ip =APIConstants.ip;
+String ip = APIConstants.ip;
+
 class SachWidgets extends StatelessWidget {
   final List<Sach> sachs;
 
-
   const SachWidgets({Key? key, required this.sachs}) : super(key: key);
-
-
-  Future<void> addToCart(int userId, int sachId) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$ip/giohang'),
-        body: {
-          'id_nguoidung': userId.toString(),
-          'id_sach': sachId.toString(),
-        },
-      );
-
-      if (response.statusCode == 200) {
-        // Đã thêm sản phẩm vào giỏ hàng thành công
-        print('Sản phẩm đã được thêm vào giỏ hàng.');
-      } else {
-        // Xử lý lỗi từ phía server
-        print('Lỗi khi thêm sản phẩm vào giỏ hàng: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Xử lý lỗi nếu có lỗi kết nối hoặc lỗi khác
-      print('Error: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +22,6 @@ class SachWidgets extends StatelessWidget {
         final sach = sachs[index];
 
         return Container(
-
           margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           decoration: BoxDecoration(
             color: Colors.grey[200],
@@ -78,7 +53,9 @@ class SachWidgets extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                      image: NetworkImage(sach.hinh_bia!),
+                      image: NetworkImage(
+                        '${APIConstants.ip}/images/${sach.hinh_bia}',
+                      ),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -103,9 +80,10 @@ class SachWidgets extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () {
                             // Gọi hàm thêm sản phẩm vào giỏ hàng
-                            addToCart(UserSingleton().getUserId()!, sach.id_sach);
+                            addToCart(sach.id_sach,
+                                1); // Adding one quantity of the specific sach to the cart
                           },
-                          child: Text('Mua'),
+                          child: Text('Thêm giỏ'),
                         ),
                       ],
                     ),
@@ -117,5 +95,44 @@ class SachWidgets extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> addToCart(int bookId, int quantityToAdd) async {
+    try {
+      const String _cartKey = 'cart';
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      // Get the current cart items from shared preferences
+      List<String>? cartItems = prefs.getStringList(_cartKey);
+      Map<String, int> cart = {};
+
+      // Convert the list of strings to a map
+      if (cartItems != null) {
+        cartItems.forEach((item) {
+          List<String> parts = item.split(':');
+          cart[parts[0]] = int.parse(parts[1]);
+        });
+      }
+
+      // Check if the book already exists in the cart
+      if (cart.containsKey(bookId.toString())) {
+        // If the book already exists in the cart, increment its quantity
+        cart[bookId.toString()] = cart[bookId.toString()]! + quantityToAdd;
+      } else {
+        // If the book doesn't exist in the cart, add it with the specified quantity
+        cart[bookId.toString()] = quantityToAdd;
+      }
+
+      // Convert the cart map back to a list of strings and save it to shared preferences
+      List<String> cartList =
+          cart.entries.map((entry) => '${entry.key}:${entry.value}').toList();
+      await prefs.setStringList(_cartKey, cartList);
+
+      // Print the updated cart
+      print('Updated Cart: $cart');
+    } catch (e) {
+      print('Error adding to cart: $e');
+      // Handle error
+    }
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:muabansach/main.dart';
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../APIConstant.dart';
 import '../model/User.dart';
 import '../UserSingleton.dart';
@@ -22,14 +22,18 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     _fetchUserById();
   }
-
+  Future<int?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('userId');
+  }
   Future<void> _fetchUserById() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final userId = UserSingleton().getUserId();
+      // Lấy userId từ SharedPreferences
+      final userId = await UserSingleton().getUserId();
       if (userId != null) {
         final response = await http.get(
           Uri.parse('$ip/nguoidung/$userId'),
@@ -41,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
             if (userData.isNotEmpty) {
               setState(() {
                 _user = User.fromJson(userData[0]);
-                _hasError = false;
+                _hasError = false;// xem coi có lỗi sảy ra hay không
               });
             } else {
               setState(() {

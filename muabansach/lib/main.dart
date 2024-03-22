@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:muabansach/UserSingleton.dart';
 import 'package:muabansach/view/TrangchuWidget.dart';
@@ -47,6 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
   final Color backgroundColor1 = Color(0xFF4aa0d5);
   final Color backgroundColor2 = Color(0xFF4aa0d5);
   final Color foregroundColor = Colors.white;
+
+  Future<void> saveUserId(int userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('userId', userId);
+  }
 
   Future<bool> checkLogin(String email, String password) async {
     try {
@@ -269,14 +274,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () async {
                         bool result =
                             await checkLogin(emaildn.text, matkhaudn.text);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => TrangChuWidget()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => TrangChuWidget()),
+                        //);
+
                         // Nếu đăng nhập thành công, chuyển đến trang chủ
                         if (result) {
                           int? userID = await findUserIdByEmail(emaildn.text);
                           UserSingleton().setUserId(userID!);
+                          saveUserId(userID);
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => TrangChuWidget()),
