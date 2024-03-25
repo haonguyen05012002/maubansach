@@ -129,31 +129,12 @@ class _MyHomePageState extends State<MyHomePage> {
             colors: [Colors.blue, Colors.white],
           ),
         ),
+        height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 40),
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-            Container(
-              padding: const EdgeInsets.only(top: 60.0, bottom: 10.0),
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 100.0,
-                      width: 100.0,
-                      child: Hero(
-                        tag: 'hero',
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 48.0,
-                          // child: Image.asset('assets/lock.png'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+
             Container(
               width: MediaQuery.of(context).size.width,
               margin:

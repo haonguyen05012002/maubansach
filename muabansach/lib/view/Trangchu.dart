@@ -160,7 +160,7 @@ class _TrangchuState extends State<Trangchu> {
                 MaterialPageRoute(builder: (context) => ProfilePage()),
               );
             },
-            icon: Icon(Icons.person_off_rounded),
+            icon: Icon(Icons.person),
           ),
         ],
       ),

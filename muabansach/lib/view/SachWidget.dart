@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:muabansach/view/SachDetail.dart';
@@ -97,42 +99,70 @@ class SachWidgets extends StatelessWidget {
     );
   }
 
+
   Future<void> addToCart(int bookId, int quantityToAdd) async {
     try {
-      const String _cartKey = 'cart';
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // Gửi yêu cầu GET để kiểm tra xem mục đã tồn tại trong giỏ hàng chưa
+      var response = await http.get(
+        Uri.parse('${APIConstants.ip}/giohang'),
+      );
 
-      // Get the current cart items from shared preferences
-      List<String>? cartItems = prefs.getStringList(_cartKey);
-      Map<String, int> cart = {};
+      if (response.statusCode == 200) {
+        // Nếu request thành công, tiếp tục xử lý dữ liệu
+        var jsonData = jsonDecode(response.body);
 
-      // Convert the list of strings to a map
-      if (cartItems != null) {
-        cartItems.forEach((item) {
-          List<String> parts = item.split(':');
-          cart[parts[0]] = int.parse(parts[1]);
-        });
-      }
-
-      // Check if the book already exists in the cart
-      if (cart.containsKey(bookId.toString())) {
-        // If the book already exists in the cart, increment its quantity
-        cart[bookId.toString()] = cart[bookId.toString()]! + quantityToAdd;
+        // Lặp qua từng phần tử trong danh sách giỏ hàng
+        for (var cartItem in jsonData) {
+          // Kiểm tra nếu id_nguoidung và id_sach trùng với tham số truyền vào
+          if (cartItem['id_nguoidung'] == UserSingleton().getUserId() &&
+              cartItem['id_sach'] == bookId) {
+            // Nếu trùng, thực hiện cập nhật số lượng
+            int currentQuantity = cartItem['soluong'];
+            int newQuantity = currentQuantity + quantityToAdd;
+            // Gửi yêu cầu PUT để cập nhật số lượng
+            var updateResponse = await http.put(
+              Uri.parse('${APIConstants.ip}/giohang_sl/${cartItem['id']}'),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+              body: jsonEncode(<String, dynamic>{
+                'soluong': newQuantity,
+              }),
+            );
+            if (updateResponse.statusCode == 200) {
+              print('Quantity updated successfully');
+            } else {
+              print('Failed to update quantity: ${updateResponse.statusCode}');
+            }
+            // Kết thúc hàm nếu đã tìm thấy và cập nhật số lượng
+            return;
+          }
+        }
       } else {
-        // If the book doesn't exist in the cart, add it with the specified quantity
-        cart[bookId.toString()] = quantityToAdd;
+        print('Failed to check if item exists in cart: ${response.statusCode}');
       }
 
-      // Convert the cart map back to a list of strings and save it to shared preferences
-      List<String> cartList =
-          cart.entries.map((entry) => '${entry.key}:${entry.value}').toList();
-      await prefs.setStringList(_cartKey, cartList);
+      // Nếu mục chưa tồn tại trong giỏ hàng, thêm mới
+      var insertResponse = await http.post(
+        Uri.parse('${APIConstants.ip}/giohangInsert'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'id_sach': bookId,
+          'id_nguoidung': UserSingleton().getUserId(),
+          'soluong': quantityToAdd,
+        }),
+      );
 
-      // Print the updated cart
-      print('Updated Cart: $cart');
+      if (insertResponse.statusCode == 200) {
+        print('Item added to cart successfully');
+      } else {
+        print('Failed to add item to cart: ${insertResponse.statusCode}');
+      }
     } catch (e) {
       print('Error adding to cart: $e');
-      // Handle error
+      // Xử lý bất kỳ lỗi nào
     }
   }
 }

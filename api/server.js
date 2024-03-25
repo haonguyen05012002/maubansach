@@ -79,66 +79,201 @@ app.get('/api/nhaxuatban', (req, res) => {
     }
   });
 });
+
+
 // Route mẫu để lấy danh sách giỏ hàng
 // API để lấy danh sách tất cả các mục trong giỏ hàng
-app.get('/api/giohang', (req, res) => {
-  const query = 'SELECT * FROM giohang';
+// app.get('/api/giohang', (req, res) => {
+//   const query = 'SELECT * FROM giohang';
 
-  db.query(query, (err, result) => {
+//   db.query(query, (err, result) => {
+//     if (err) {
+//       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+//       res.status(500).json({ error: 'Internal Server Error' });
+//     } else {
+//       res.json(result);
+//     }
+//   });
+// });
+// Endpoint to retrieve items in the shopping cart for a user
+app.get('/api/giohang/:id_nguoidung', (req, res) => {
+  const id_nguoidung = req.params.id_nguoidung;
+  const sql = 'SELECT * FROM giohang WHERE id_nguoidung = ?';
+  db.query(sql, [id_nguoidung], (err, result) => {
+    if (err) {
+      console.error('Error retrieving cart items: ' + err.message);
+      res.status(500).send('Error retrieving cart items');
+      return;
+    }
+    res.json(result);
+  });
+});
+
+// API để kiểm tra xem một sách cụ thể có trong giỏ hàng hay không
+app.get('/api/getgiohang/:id_sach', (req, res) => {
+  const id_sach = req.params.id_sach;
+  
+
+  // Kiểm tra tính hợp lệ của dữ liệu đầu vào
+  if (!id_sach) {
+    return res.status(400).json({ error: "Thông tin không hợp lệ" });
+  }
+
+  const query = 'SELECT * FROM giohang WHERE id_sach = ? ';
+
+  db.query(query, [id_sach], (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      return res.status(500).json({ error: 'Lỗi truy vấn cơ sở dữ liệu' });
+    } else {
+      if (result.length === 0) {
+        res.json({ inCart: false });
+        return res.status(500).json({ error: 'ko ton tai' });
+      } else {
+        res.json({ inCart: true, cartItem: result[0] });
+      }
+    }
+  });
+});
+
+
+app.get('/api/getgiohang/:id', (req, res) => {
+  const id = req.params.id;
+  const query = 'SELECT * FROM giohang WHERE id = ?';
+  db.query(query,[id] ,(err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
       res.status(500).json({ error: 'Internal Server Error' });
+      return;
     } else {
       res.json(result);
     }
   });
 });
 
+// API để cập nhật số lượng của một mục trong giỏ hàng
+app.put('/api/giohang_sl/:id', (req, res) => {
+  const id_giohang = req.params.id;
+  const newQuantity = req.body.soluong;
 
-// API để thêm một mục vào giỏ hàng
-// API để thêm một mục vào giỏ hàng
-app.post('/api/giohang', (req, res) => {
-  const { id_nguoidung, id_sach } = req.body;
-
-  if (!id_nguoidung || !id_sach) {
-    return res.status(400).json({ error: 'id_nguoidung and id_sach are required.' });
+  // Kiểm tra tính hợp lệ của dữ liệu đầu vào
+  if (!newQuantity) {
+    return res.status(400).json({ error: "Dữ liệu không hợp lệ" });
   }
 
-  const addCartItemQuery = 'INSERT INTO giohang (id_sach, id_nguoidung) VALUES (?, ?)';
-
-  db.query(addCartItemQuery, [id_sach, id_nguoidung], (err, result) => {
-    if (err) {
-      console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+  const queryUpdate = 'UPDATE giohang SET soluong = ? WHERE id = ?';
+  db.query(queryUpdate, [newQuantity, id_giohang], (updateErr, updateResult) => {
+    if (updateErr) {
+      console.error('Lỗi cập nhật giỏ hàng:', updateErr);
+      return res.status(500).json({ error: 'Lỗi cập nhật giỏ hàng' });
     }
-
-    // Lấy ID của mục giỏ hàng vừa được thêm vào
-    const insertedId = result.insertId;
-
-    res.json({ id: insertedId, message: 'Sản phẩm đã được thêm vào giỏ hàng.' });
+    res.status(200).json({ message: 'Cập nhật giỏ hàng thành công' });
   });
 });
+
+
+
+// Endpoint to add an item to the shopping cart
+// app.post('/api/giohangInsert', (req, res) => {
+//   const { id_sach, id_nguoidung, product } = req.body;
+//   const sql = 'INSERT INTO giohang (id_sach, id_nguoidung, product) VALUES (?, ?, ?)';
+//   db.query(sql, [id_sach, id_nguoidung, product], (err, result) => {
+//     if (err) {
+//       console.error('Error adding item to cart: ' + err.message);
+//       res.status(500).send('Error adding item to cart');
+//       return;
+//     }
+//     res.status(200).send('Item added to cart successfully');
+//   });
+// });
+
+// Route để chèn một mục vào giỏ hàng
+app.post('/api/giohangInsert', (req, res) => {
+  const { id_sach, id_nguoidung, soluong } = req.body;
+
+  // Kiểm tra tính hợp lệ của dữ liệu đầu vào
+  if (!id_sach || !id_nguoidung || !soluong) {
+    return res.status(400).json({ error: "Dữ liệu không hợp lệ" });
+  }
+
+  const sql = 'INSERT INTO giohang (id_sach, id_nguoidung, soluong) VALUES (?, ?, ?)';
+  db.query(sql, [id_sach, id_nguoidung, soluong], (err, result) => {
+    if (err) {
+      console.error('Lỗi chèn mục vào giỏ hàng: ' + err.message);
+      return res.status(500).json({ error: "Lỗi chèn mục vào giỏ hàng" });
+    }
+    res.status(200).json({ message: 'Đã chèn mục vào giỏ hàng thành công' });
+  });
+});
+
+
+
+
+// API để thêm một mục vào giỏ hàng
+// app.post('/api/giohang/:id_sach', (req, res) => {
+//   const { id_nguoidung, id_sach } = req.body;
+
+//   if (!id_nguoidung || !id_sach) {
+//     return res.status(400).json({ error: 'id_nguoidung and id_sach are required.' });
+//   }
+
+//   const addCartItemQuery = 'INSERT INTO giohang (id_sach, id_nguoidung) VALUES (?, ?)';
+
+//   db.query(addCartItemQuery, [id_sach, id_nguoidung], (err, result) => {
+//     if (err) {
+//       console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', err);
+//       return res.status(500).json({ error: 'Internal Server Error' });
+//     }
+
+//     // Lấy ID của mục giỏ hàng vừa được thêm vào
+//     const insertedId = result.insertId;
+
+//     res.json({ id: insertedId, message: 'Sản phẩm đã được thêm vào giỏ hàng.' });
+//   });
+// });
 
 
 // API để xóa một mục khỏi giỏ hàng
-app.delete('/api/giohang', (req, res) => {
-  const { id_nguoidung, id_sach } = req.body;
+// app.delete('/api/giohang/:id_sach', (req, res) => {
+//   const { id_nguoidung, id_sach } = req.body;
 
-  if (!id_nguoidung || !id_sach) {
-    return res.status(400).json({ error: 'id_nguoidung and id_sach are required.' });
+//   if (!id_nguoidung || !id_sach) {
+//     return res.status(400).json({ error: 'id_nguoidung and id_sach are required.' });
+//   }
+
+//   const deleteCartItemQuery = 'DELETE FROM giohang WHERE id_nguoidung = ? AND id_sach = ?';
+
+//   db.query(deleteCartItemQuery, [id_nguoidung, id_sach], (err, result) => {
+//     if (err) {
+//       console.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:', err);
+//       return res.status(500).json({ error: 'Internal Server Error' });
+//     }
+
+//     res.json({ message: 'Sản phẩm đã được xóa khỏi giỏ hàng.' });
+//   });
+// });
+// Endpoint để xóa một mục từ giỏ hàng dựa trên ID của mục
+app.delete('/api/giohang/:cartItemId', (req, res) => {
+  const cartItemId = req.params.cartItemId;
+
+  // Kiểm tra tính hợp lệ của ID của mục giỏ hàng
+  if (!cartItemId) {
+    return res.status(400).json({ error: "ID của mục giỏ hàng không hợp lệ" });
   }
 
-  const deleteCartItemQuery = 'DELETE FROM giohang WHERE id_nguoidung = ? AND id_sach = ?';
+  const deleteQuery = 'DELETE FROM giohang WHERE id = ?';
 
-  db.query(deleteCartItemQuery, [id_nguoidung, id_sach], (err, result) => {
+  db.query(deleteQuery, [cartItemId], (err, result) => {
     if (err) {
-      console.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:', err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Lỗi khi xóa mục khỏi giỏ hàng:', err);
+      return res.status(500).json({ error: 'Lỗi khi xóa mục khỏi giỏ hàng' });
     }
-
-    res.json({ message: 'Sản phẩm đã được xóa khỏi giỏ hàng.' });
+    res.status(200).json({ message: 'Đã xóa mục khỏi giỏ hàng thành công' });
   });
 });
+
+
+
 //
 app.get('/api/giohang/:id_nguoidung', (req, res) => {
   const { id_nguoidung } = req.params;
@@ -222,6 +357,21 @@ app.get('/api/voucher', (req, res) => {
     }
   });
 });
+
+app.get('/api/giohang', (req, res) => {
+
+  const query = 'SELECT * FROM giohang';
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(result); 
+    }
+  });
+});
+
 app.post('/api/addnguoidung', (req, res) => {
   const { email, mat_khau } = req.body;
 
@@ -257,6 +407,9 @@ app.get('/api/giohang/:userId', (req, res) => {
   });
 });
 
+// Route để lấy thông tin giỏ hàng của một người dùng cụ thể
+
+
 
 app.get('/api/sach/:userId', (req, res) => {
   const userId = req.params.userId;
@@ -284,10 +437,10 @@ app.get('/api/nguoidung/:userId', (req, res) => {
   });
 });
 
-app.get('/api/sach/:id_sach', (req, res) => {
+app.get('/api/getsach/:id_sach', (req, res) => {
   const id_sach = req.params.id_sach;
   const query = 'SELECT * FROM sach WHERE id_sach = ?';
-
+  console.log(id_sach);
   db.query(query, [id_sach], (err, result) => {
     if (err) {
       console.error('Lỗi truy vấn cơ sở dữ liệu:', err);
@@ -301,6 +454,7 @@ app.get('/api/sach/:id_sach', (req, res) => {
     }
   });
 });
+
 app.get('/api/timsach', (req, res) => {
   const ten_sach = req.query.ten_sach; // Sử dụng req.query để lấy tham số truy vấn từ URL
 

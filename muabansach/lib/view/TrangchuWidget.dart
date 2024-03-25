@@ -103,6 +103,7 @@ class _TrangChuWidget extends State<TrangChuWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text("HOME"),
           actions: [
             IconButton(
@@ -133,7 +134,7 @@ class _TrangChuWidget extends State<TrangChuWidget> {
                   MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
               },
-              icon: Icon(Icons.person_off_rounded),
+              icon: Icon(Icons.person),
             ),
           ],
         ),
@@ -408,6 +409,11 @@ class _TrangChuWidget extends State<TrangChuWidget> {
               break;
             case 1:
               print('Library icon tapped');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Trangchu()),
+              );
+              break;
               // Thêm hành động cho Library icon ở đây
               break;
             case 2:

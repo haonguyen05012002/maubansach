@@ -94,44 +94,29 @@ class _DangkiState extends State<Dangki> {
         backgroundColor: Theme.of(context).colorScheme.background,
         title: Text("Smart Book"),
       ),
-      body: Container(
+      body:
+
+      SingleChildScrollView(
+    child:
+
+      Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.centerLeft,
-            end: Alignment(1.0, 0.0),
-            colors: [backgroundColor1, backgroundColor2],
-            tileMode: TileMode.repeated,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue, Colors.white],
+
           ),
         ),
         height: MediaQuery.of(context).size.height,
         child: Column(
           children: <Widget>[
-            Container(
-              padding: const EdgeInsets.only(top: 100.0, bottom: 10.0),
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 100.0,
-                      width: 100.0,
-                      child: Hero(
-                        tag: 'hero',
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 48.0,
-                          //child: Image.asset('assets/lock.png'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+
 
             Container(
               width: MediaQuery.of(context).size.width,
               margin:
-              const EdgeInsets.symmetric(horizontal: 40.0, vertical: 30.0),
+              const EdgeInsets.symmetric(horizontal: 40.0, vertical: 50.0),
               alignment: Alignment.center,
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -337,9 +322,10 @@ class _DangkiState extends State<Dangki> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                    child: TextButton(
+                    child: ElevatedButton(
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                        backgroundColor: Colors.lightBlue,
                       ),
                       onPressed: () => {
                       Navigator.push(
@@ -357,7 +343,7 @@ class _DangkiState extends State<Dangki> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }

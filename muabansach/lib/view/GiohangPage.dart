@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:muabansach/APIConstant.dart';
+import 'package:muabansach/UserSingleton.dart';
 import 'package:muabansach/model/Sach.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+
+import 'ThanhToanPage.dart';
 class CartPage extends StatefulWidget {
   @override
   _CartPageState createState() => _CartPageState();
@@ -18,18 +21,18 @@ class _CartPageState extends State<CartPage> {
   void initState() {
     super.initState();
     // Load cart items when the page initializes
-    _loadCartItems();
+    // _loadCartItems();
   }
 
   // Function to load cart items from SharedPreferences
-  Future<void> _loadCartItems() async {
-    Map<String, int>? cart = await _getCartItemsFromSharedPreferences();
-    if (cart != null) {
-      setState(() {
-        _cartItems = cart;
-      });
-    }
-  }
+  // Future<void> _loadCartItems() async {
+  //   Map<String, int>? cart = await _getCartItemsFromSharedPreferences();
+  //   if (cart != null) {
+  //     setState(() {
+  //       _cartItems = cart;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -43,27 +46,27 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _buildCartList() {
-    return FutureBuilder<Map<String, int>>(
-      future: _getCartItemsFromSharedPreferences(),
+    return FutureBuilder<List<dynamic>>(
+      future: fetchCartItemsFromAPI(), // Gọi API để lấy danh sách các mặt hàng trong giỏ hàng
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          // Extract cart items from snapshot
-          Map<String, int>? cartItems = snapshot.data;
-          if (cartItems != null && cartItems.isNotEmpty) {
+          List<dynamic> cartItems = snapshot.data!;
+          if (cartItems.isNotEmpty) {
             return ListView.builder(
               itemCount: cartItems.length,
               itemBuilder: (context, index) {
-                String sachId = cartItems.keys.elementAt(index);
-                int quantity = cartItems.values.elementAt(index);
+                Map<String, dynamic> cartItem = cartItems[index];
+                String sachId = cartItem['id_sach'].toString();
+                int quantity = int.parse(cartItem['soluong'].toString());
                 return FutureBuilder<Sach?>(
                   future: fetchSach(int.parse(sachId)),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Text('Error loading Sach');
                     } else {
@@ -85,6 +88,26 @@ class _CartPageState extends State<CartPage> {
       },
     );
   }
+
+
+  Future<List<dynamic>> fetchCartItemsFromAPI() async {
+    final response = await http.get(Uri.parse('${APIConstants.ip}/giohang'));
+
+    if (response.statusCode == 200) {
+      // Nếu request thành công, parse JSON response
+      List<dynamic> cartItems = jsonDecode(response.body);
+
+      // Lọc các mục trong giỏ hàng để chỉ lấy những mục của người dùng hiện tại
+      List<dynamic> userCartItems = cartItems.where((item) => item['id_nguoidung'] == UserSingleton().getUserId()).toList();
+
+      return userCartItems;
+    } else {
+      // Nếu request thất bại, throw error
+      throw Exception('Failed to load cart items');
+    }
+  }
+
+
 
   Widget _buildCartItem(Sach item, int sachid, int soluong) {
     return Card(
@@ -131,14 +154,72 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
             _buildQuantityAdjustmentButtons(item, sachid, soluong),
+            IconButton(
+              icon: Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                _removeItemFromCart(UserSingleton().getUserId()!, sachid).then((success) {
+                  if (success) {
+                    setState(() {
+                      _cartItems.remove(sachid.toString()); // Xóa mặt hàng khỏi danh sách cartItems
+                    });
+                  }
+                });
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
+  Future<bool> _removeItemFromCart(int userId, int bookId) async {
+    try {
+      // Gửi yêu cầu GET để kiểm tra xem mục đã tồn tại trong giỏ hàng chưa
+      var response = await http.get(
+        Uri.parse('${APIConstants.ip}/giohang'),
+      );
 
-  Widget _buildQuantityAdjustmentButtons(Sach item, int sachid, int quantity) {
+      if (response.statusCode == 200) {
+        // Nếu request thành công, tiếp tục xử lý dữ liệu
+        var jsonData = jsonDecode(response.body);
+
+        // Lọc danh sách các mục trong giỏ hàng của người dùng hiện tại
+        var userCartItems = jsonData.where((item) => item['id_nguoidung'] == userId).toList();
+
+        // Tìm id của mục trong giỏ hàng có id_sach là bookId
+        var cartItem = userCartItems.firstWhere((item) => item['id_sach'] == bookId, orElse: () => null);
+
+        if (cartItem != null) {
+          // Nếu tìm thấy mục trong giỏ hàng, lấy id của giỏ hàng tương ứng
+          var cartId = cartItem['id'];
+
+          // Gửi yêu cầu DELETE để xóa mặt hàng khỏi giỏ hàng
+          var deleteResponse = await http.delete(
+            Uri.parse('${APIConstants.ip}/giohang/$cartId'),
+          );
+
+          if (deleteResponse.statusCode == 200) {
+            print('Item removed from cart successfully');
+            return true; // Trả về true nếu xóa thành công
+          } else {
+            print('Failed to remove item from cart: ${deleteResponse.statusCode}');
+            return false; // Trả về false nếu xóa thất bại
+          }
+        } else {
+          print('Item not found in cart');
+          return false; // Trả về false nếu mặt hàng không tồn tại trong giỏ hàng
+        }
+      } else {
+        print('Failed to fetch cart items: ${response.statusCode}');
+        return false; // Trả về false nếu không thể lấy danh sách giỏ hàng
+      }
+    } catch (e) {
+      print('Error removing item from cart: $e');
+      return false; // Trả về false nếu có lỗi xảy ra
+    }}
+
+
+  Widget _buildQuantityAdjustmentButtons(Sach item, int sachid, int soluong) {
     return Container(
       width: 150,
       child: Row(
@@ -146,19 +227,32 @@ class _CartPageState extends State<CartPage> {
           IconButton(
             icon: Icon(Icons.remove, color: Colors.deepPurple),
             onPressed: () {
-              _updateItemQuantity(sachid, quantity - 1);
-              print(_cartItems.toString());
+
+                // Giảm số lượng chỉ khi soluong > 1
+                _updateItemQuantity(UserSingleton().getUserId()!, sachid, soluong - 1).then((success) {
+                  if (success) {
+                    setState(() {
+                      soluong--; // Cập nhật giá trị soluong
+                    });
+                  }
+                });
+
             },
           ),
           Text(
-            '$quantity', // Display the quantity dynamically
+            '$soluong', // Display the quantity dynamically
             style: TextStyle(fontSize: 16, color: Colors.deepPurple),
           ),
           IconButton(
             icon: Icon(Icons.add, color: Colors.deepPurple),
             onPressed: () {
-              _updateItemQuantity(sachid, quantity + 1);
-              print(_cartItems.toString());
+              _updateItemQuantity(UserSingleton().getUserId()!, sachid, soluong + 1).then((success) {
+                if (success) {
+                  setState(() {
+                    soluong++; // Cập nhật giá trị soluong
+                  });
+                }
+              });
             },
           ),
         ],
@@ -166,82 +260,137 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Future<void> _updateItemQuantity(int sachid, int quantity) async {
+  Future<bool> _updateItemQuantity(int userId, int bookId, int newQuantity) async {
     try {
-      const String _cartKey = 'cart';
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // Gửi yêu cầu GET để kiểm tra xem mục đã tồn tại trong giỏ hàng chưa
+      var response = await http.get(
+        Uri.parse('${APIConstants.ip}/giohang'),
+      );
 
-      // Get the current cart items from shared preferences
-      Map<String, int>? cartItems = await _getCartItemsFromSharedPreferences();
+      if (response.statusCode == 200) {
+        // Nếu request thành công, tiếp tục xử lý dữ liệu
+        var jsonData = jsonDecode(response.body);
 
-      // Update the quantity of the item in the cart
-      if (cartItems != null && cartItems.containsKey(sachid.toString())) {
-        // If the item exists in the cart, update its quantity
-        cartItems[sachid.toString()] = quantity;
+        // Lọc danh sách các mục trong giỏ hàng của người dùng hiện tại
+        var userCartItems = jsonData.where((item) => item['id_nguoidung'] == userId).toList();
 
-        // Convert the cart map back to a list of strings and save it to shared preferences
-        List<String> cartList = cartItems.entries
-            .map((entry) => '${entry.key}:${entry.value}')
-            .toList();
-        await prefs.setStringList(_cartKey, cartList);
+        // Tìm id của mục trong giỏ hàng có id_sach là bookId
+        var cartItem = userCartItems.firstWhere((item) => item['id_sach'] == bookId, orElse: () => null);
 
-        // Reload the cart items
-        await _loadCartItems();
+        if (cartItem != null) {
+          // Nếu tìm thấy mục trong giỏ hàng, lấy id của giỏ hàng tương ứng
+          var cartId = cartItem['id'];
+
+          if (newQuantity <= 0) {
+            // Nếu số lượng mới <= 0, gửi yêu cầu DELETE để xóa mặt hàng khỏi giỏ hàng
+            var deleteResponse = await http.delete(
+              Uri.parse('${APIConstants.ip}/giohang/$cartId'),
+            );
+
+            if (deleteResponse.statusCode == 200) {
+              print('Item removed from cart successfully');
+              return true; // Trả về true nếu xóa thành công
+            } else {
+              print('Failed to remove item from cart: ${deleteResponse.statusCode}');
+              return false; // Trả về false nếu xóa thất bại
+            }
+          } else {
+            // Nếu số lượng mới > 0, gửi yêu cầu PUT để cập nhật số lượng của mặt hàng trong giỏ hàng
+            var updateResponse = await http.put(
+              Uri.parse('${APIConstants.ip}/giohang_sl/$cartId'),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+              body: jsonEncode(<String, dynamic>{
+                'soluong': newQuantity,
+              }),
+            );
+
+            if (updateResponse.statusCode == 200) {
+              print('Quantity updated successfully');
+              return true; // Trả về true nếu cập nhật thành công
+            } else {
+              print('Failed to update quantity: ${updateResponse.statusCode}');
+              return false; // Trả về false nếu cập nhật thất bại
+            }
+          }
+        } else {
+          print('Item not found in cart');
+          return false; // Trả về false nếu mặt hàng không tồn tại trong giỏ hàng
+        }
+      } else {
+        print('Failed to fetch cart items: ${response.statusCode}');
+        return false; // Trả về false nếu không thể lấy danh sách giỏ hàng
       }
     } catch (e) {
-      print('Error updating item quantity: $e');
-      // Handle error
+      print('Error updating quantity: $e');
+      return false; // Trả về false nếu có lỗi xảy ra
     }
   }
 
-  Future<Map<String, int>> _getCartItemsFromSharedPreferences() async {
+
+  // Future<Map<String, int>> _getCartItemsFromSharedPreferences() async {
+  //   try {
+  //     const String _cartKey = 'cart';
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //     // Get the current cart items from shared preferences
+  //     List<String>? cartItems = prefs.getStringList(_cartKey);
+  //     Map<String, int> cart = {};
+  //
+  //     // Convert the list of strings to a map
+  //     if (cartItems != null) {
+  //       cartItems.forEach((item) {
+  //         List<String> parts = item.split(':');
+  //         cart[parts[0]] = int.parse(parts[1]);
+  //       });
+  //     }
+  //
+  //     print('Retrieved Cart: $cart');
+  //
+  //     return cart;
+  //   } catch (e) {
+  //     print('Error retrieving cart items: $e');
+  //     // Handle error
+  //     return {};
+  //   }
+  // }
+
+  Future<double> _calculateTotal() async {
     try {
-      const String _cartKey = 'cart';
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final cartItems = await fetchCartItemsFromAPI();
+      double total = 0;
 
-      // Get the current cart items from shared preferences
-      List<String>? cartItems = prefs.getStringList(_cartKey);
-      Map<String, int> cart = {};
+      // Duyệt qua từng sản phẩm trong giỏ hàng
+      for (var cartItem in cartItems) {
+        // Lấy thông tin của sách từ API
+        final sachId = cartItem['id_sach'];
+        final sach = await fetchSach(int.parse(sachId.toString()));
 
-      // Convert the list of strings to a map
-      if (cartItems != null) {
-        cartItems.forEach((item) {
-          List<String> parts = item.split(':');
-          cart[parts[0]] = int.parse(parts[1]);
-        });
+        // Tính tổng giá sản phẩm nhân với số lượng
+        if (sach != null) {
+          int quantity = int.parse(cartItem['soluong'].toString());
+          total += sach.gia * quantity;
+        }
       }
-
-      print('Retrieved Cart: $cart');
-
-      return cart;
+      return total;
     } catch (e) {
-      print('Error retrieving cart items: $e');
-      // Handle error
-      return {};
+      print('Error calculating total: $e');
+      return 0;
     }
   }
 
-  double _calculateTotal(Map<String, int> cart) {
-    double total = 0;
-    for (String sachId in cart.keys) {
-      Sach item = Sach.getTestSach();// edit
-      int quantity = cart[sachId] ?? 0;
-      total += item.gia * quantity;
-    }
-    return total;
-  }
 
   Widget _buildCheckoutBar() {
-    return FutureBuilder<Map<String, int>>(
-      future: _getCartItemsFromSharedPreferences(),
-      builder: (context, snapshot) {
+    return FutureBuilder<double>(
+      future: _calculateTotal(),
+      builder: (context, snapshot)  {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          Map<String, int>? cartItems = snapshot.data;
-          double total = _calculateTotal(cartItems ?? {});
+          double total = snapshot.data ?? 0;
           return BottomAppBar(
             color: Colors.deepPurple,
             child: Container(
@@ -258,10 +407,10 @@ class _CartPageState extends State<CartPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // // Navigate to CheckoutPage
-                      // Navigator.of(context).push(
-                      //   MaterialPageRoute(builder: (context) => CheckoutPage()),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ThanhtoanPage()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purpleAccent,
@@ -277,13 +426,15 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+}
+
   Future<Sach?> fetchSach(int id) async {
-    print("ooooooooooooooooooooooooooooo");
+    print("oooo");
     print(id.toString());
     try {
       final response = await http.get(Uri.parse('${APIConstants.ip}/getsach/$id'));
       if (response.statusCode == 200) {
-        print("ooooooooooooooooooooooooooooo");
+        print("o");
         print(jsonDecode(response.body).toString());
         return Sach.fromJson(jsonDecode(response.body));
       } else {
@@ -298,4 +449,4 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-}
+
